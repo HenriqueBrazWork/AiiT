@@ -10,27 +10,21 @@ body {
     color: white;
 }
 
-.chatbot-container {
+.chatbox-container {
     background-color: #f8f9fa;
     padding: 20px;
     border-radius: 5px;
-}
-
-#chatbot-messages {
     max-height: 200px;
     overflow-y: auto;
     margin-bottom: 10px;
-    padding: 10px;
-    background-color: #fff;
-    border: 1px solid #ccc;
 }
 
-#chatbot-input {
+#userInput {
     width: calc(100% - 80px);
     display: inline-block;
 }
 
-#chatbot-send {
+#sendButton {
     display: inline-block;
     width: 70px;
 }
