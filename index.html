@@ -6,10 +6,10 @@
     <title>AiiT - Assistência e Inovação em Informática e Tecnologia</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css">
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <!-- Header -->
@@ -31,7 +31,7 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="hero-section text-white text-center" style="background-image: url('background-image.jpg');">
+    <section class="hero-section text-white text-center" style="background-image: url('assets/images/background-image.jpg');">
         <div class="container">
             <h1 class="display-4">Assistência e Inovação em Informática e Tecnologia</h1>
             <p class="lead">Soluções em Tecnologia para Você e Sua Empresa</p>
@@ -90,11 +90,9 @@
     <section id="chatbot" class="py-5">
         <div class="container">
             <h2 class="text-center mb-4">Chatbot de Suporte Online</h2>
-            <div class="chatbot-container">
-                <div id="chatbot-messages"></div>
-                <input type="text" id="chatbot-input" placeholder="Digite sua pergunta...">
-                <button id="chatbot-send" class="btn btn-primary">Enviar</button>
-            </div>
+            <div class="chatbox-container" id="chatbox"></div>
+            <input type="text" id="userInput" placeholder="Digite sua pergunta...">
+            <button id="sendButton" class="btn btn-primary">Enviar</button>
         </div>
     </section>
 
