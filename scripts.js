@@ -1,6 +1,11 @@
 // scripts.js
 
-// Função para enviar mensagem para o chatbot (simulação por enquanto)
+// Variável para armazenar o histórico da conversa
+let conversationHistory = [
+    { role: 'system', content: 'Responda de maneira prática, simples e útil. Evite respostas longas e complexas.' }
+];
+
+// Função para enviar mensagem para o chatbot (OpenAI)
 async function sendMessage() {
     const userInput = document.getElementById('userInput').value;
     if (!userInput) return;
@@ -8,14 +13,38 @@ async function sendMessage() {
     // Exibir a mensagem do usuário na caixa de chat
     displayMessage(userInput, 'user');
 
+    // Adicionar a mensagem do usuário ao histórico da conversa
+    conversationHistory.push({ role: 'user', content: userInput });
+
     // Limpar a entrada do usuário
     document.getElementById('userInput').value = '';
 
-    // Simular uma resposta do chatbot
-    setTimeout(() => {
-        const botMessage = 'Esta é uma resposta simulada do chatbot.';
+    try {
+        // Fazer a chamada para o backend que se comunica com a API da OpenAI
+        const response = await fetch('http://localhost:3000/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ messages: conversationHistory }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro ao se comunicar com o servidor');
+        }
+
+        const data = await response.json();
+        const botMessage = data.botMessage;
+
+        // Adicionar a resposta do bot ao histórico da conversa
+        conversationHistory.push({ role: 'assistant', content: botMessage });
+
+        // Exibir a resposta do bot na caixa de chat
         displayMessage(botMessage, 'bot');
-    }, 1000);
+    } catch (error) {
+        console.error('Erro:', error);
+        displayMessage('Desculpe, houve um erro ao processar sua solicitação.', 'bot');
+    }
 }
 
 // Função para exibir as mensagens na caixa de chat
