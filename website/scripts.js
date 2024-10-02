@@ -1,4 +1,4 @@
-// chatbot.js
+// scripts.js
 
 // Função para enviar mensagem para a API OpenAI
 async function sendMessage() {
@@ -17,7 +17,7 @@ async function sendMessage() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer sk-svcacct-3uTTZNii3HJ_J8LKLR2ikLi1UeU85AB5ACvkfu3vW3zgzl7d4SJ5lhrF-TtsTT3BlbkFJEbNWJVv0xv_yED6lzSFH6Mr2k_qqa_OZBq78tqfJiwlVj3Q5Osz-bMIa0ePbgA` // Adicione sua chave de API aqui
+                'Authorization': `Bearer YOUR_OPENAI_API_KEY_HERE` // Substitua pela sua chave da API
             },
             body: JSON.stringify({
                 model: 'gpt-4',
@@ -49,3 +49,13 @@ function displayMessage(message, sender) {
     chatbox.appendChild(messageElement);
     chatbox.scrollTop = chatbox.scrollHeight; // Rolar para o final da caixa de chat
 }
+
+// Evento para enviar a mensagem quando o botão é clicado
+document.getElementById('sendButton').addEventListener('click', sendMessage);
+
+// Evento para enviar a mensagem quando a tecla Enter é pressionada
+document.getElementById('userInput').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        sendMessage();
+    }
+});
