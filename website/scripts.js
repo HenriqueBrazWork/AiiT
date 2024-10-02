@@ -17,7 +17,7 @@ async function sendMessage() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer YOUR_OPENAI_API_KEY_HERE` // Substitua pela sua chave da API
+                'Authorization': `Bearer sk-svcacct-3uTTZNii3HJ_J8LKLR2ikLi1UeU85AB5ACvkfu3vW3zgzl7d4SJ5lhrF-TtsTT3BlbkFJEbNWJVv0xv_yED6lzSFH6Mr2k_qqa_OZBq78tqfJiwlVj3Q5Osz-bMIa0ePbgA` // Substitua pela sua chave da API
             },
             body: JSON.stringify({
                 model: 'gpt-4',
