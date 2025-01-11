@@ -1,34 +1,175 @@
 /* styles.css */
 body {
     font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
 }
 
-.hero-section {
-    background-size: cover;
-    background-position: center;
-    padding: 100px 0;
+/* Header */
+header {
+    background-color: #003366;
     color: white;
+    padding: 20px 0;
+    text-align: center;
+}
+header h1 {
+    margin: 0;
+    font-size: 2.5em;
+}
+header nav {
+    margin: 20px 0;
+}
+header nav ul {
+    list-style: none;
+    padding: 0;
+}
+header nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+header nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1em;
+}
+header nav ul li a:hover {
+    text-decoration: underline;
+}
+header .cta-button {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+}
+header .cta-button:hover {
+    background-color: #0056b3;
 }
 
-.chatbox-container {
-    background-color: #f8f9fa;
+/* Hero Section */
+.hero {
+    background-color: #003366;
+    color: white;
+    padding: 80px 20px;
+    text-align: center;
+}
+.hero h2 {
+    margin: 0;
+    font-size: 2em;
+}
+
+/* Sections */
+section {
+    padding: 40px 20px;
+}
+
+section h2 {
+    color: #003366;
+    text-align: center;
+    font-size: 2em;
+}
+
+section p {
+    text-align: center;
+    font-size: 1.1em;
+}
+
+/* Serviços */
+.servicos-lista {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+.servico-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
     padding: 20px;
+    margin: 10px;
+    border-radius: 8px;
+    width: 30%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+.servico-item h3 {
+    color: #003366;
+}
+
+/* Contato */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+form input, form textarea {
+    width: 100%;
+    max-width: 500px;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
     border-radius: 5px;
-    max-height: 200px;
+}
+form button {
+    padding: 10px 20px;
+    background-color: #003366;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+form button:hover {
+    background-color: #007BFF;
+}
+
+/* Footer */
+footer {
+    background-color: #003366;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+}
+
+/* Chatbot */
+.chatbox-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    max-width: 600px;
+    margin: auto;
+    margin-bottom: 40px;
+}
+.chatbox-header {
+    color: #003366;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+.chatbox {
+    width: 100%;
+    height: 300px;
+    border: 1px solid #ddd;
+    padding: 10px;
     overflow-y: auto;
     margin-bottom: 10px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
 }
-
-#userInput {
-    width: calc(100% - 80px);
-    display: inline-block;
+.input-box {
+    width: calc(100% - 90px);
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
 }
-
-#sendButton {
-    display: inline-block;
-    width: 70px;
+.input-button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-left: 10px;
 }
-
-footer {
-    margin-top: 20px;
+.input-button:hover {
+    background-color: #0056b3;
 }
