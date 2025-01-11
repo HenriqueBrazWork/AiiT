@@ -83,15 +83,13 @@
         </div>
     </section>
 
-    <!-- Chatbot -->
+    <!-- Chatbot Section -->
     <section id="chatbot">
-        <div class="container">
-            <h2>Chatbot de Suporte</h2>
-            <div class="chatbox-container">
-                <div class="chatbox" id="chatbox"></div>
-                <input type="text" id="userInput" placeholder="Digite sua pergunta..." />
-                <button class="input-button" id="sendButton">Enviar</button>
-            </div>
+        <div class="chatbox-container">
+            <div class="chatbox-header">Chatbot de Suporte Online</div>
+            <div class="chatbox" id="chatbox"></div>
+            <input class="input-box" type="text" id="userInput" placeholder="Digite sua pergunta...">
+            <button class="input-button" onclick="sendMessage()">Enviar</button>
         </div>
     </section>
 
@@ -105,7 +103,6 @@
         </div>
     </footer>
 
-    <!-- Adicionando o arquivo de script externo -->
     <script src="scripts.js"></script>
 </body>
 </html>
