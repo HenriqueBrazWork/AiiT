@@ -1,9 +1,5 @@
-// scripts.js
-
 // Variável para armazenar o histórico da conversa
-let conversationHistory = [
-    { role: 'system', content: 'Responda de maneira prática, simples e útil. Evite respostas longas e complexas.' }
-];
+let conversationHistory = [];
 
 // Função para enviar mensagem para o chatbot (OpenAI)
 async function sendMessage() {
@@ -21,12 +17,12 @@ async function sendMessage() {
 
     try {
         // Fazer a chamada para o backend que se comunica com a API da OpenAI
-        const response = await fetch('http://localhost:3000/api/chat', {
+        const response = await fetch('https://127.0.0.1:8000/chat', {  // Substitua o URL pelo endpoint da sua API
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ messages: conversationHistory }),
+            body: JSON.stringify({ messages: conversationHistory })
         });
 
         if (!response.ok) {
@@ -34,7 +30,7 @@ async function sendMessage() {
         }
 
         const data = await response.json();
-        const botMessage = data.botMessage;
+        const botMessage = data.response;
 
         // Adicionar a resposta do bot ao histórico da conversa
         conversationHistory.push({ role: 'assistant', content: botMessage });
