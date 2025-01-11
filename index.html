@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
     <!-- Header / Menu de Navegação -->
     <header>
         <div class="container">
@@ -19,52 +20,53 @@
                     <li><a href="#contato">Contato</a></li>
                 </ul>
             </nav>
-            <a href="#servicos" class="cta-button">Conheça nossos Serviços</a>
         </div>
     </header>
 
-    <!-- Página Inicial -->
-    <section id="inicio">
-        <div class="hero">
-            <h2>Soluções inovadoras para transformar desafios em oportunidades</h2>
+    <!-- Seção de Introdução -->
+    <section id="inicio" class="hero">
+        <div class="container">
+            <h2>Transformamos Desafios em Oportunidades com Soluções Inovadoras</h2>
+            <p>Descubra como nossas tecnologias podem levar sua empresa para o futuro!</p>
+            <a href="#servicos" class="cta-button">Saiba Mais</a>
         </div>
     </section>
 
-    <!-- Sobre Nós -->
-    <section id="sobre">
+    <!-- Seção Sobre Nós -->
+    <section id="sobre" class="about-section">
         <div class="container">
             <h2>Sobre Nós</h2>
-            <p>AiiT é uma empresa dedicada a criar soluções inovadoras para os problemas dos clientes, utilizando o que há de mais avançado em tecnologia, robótica, Machine Learning e Inteligência Artificial.</p>
-            <img src="sua-imagem-aqui.jpg" alt="Imagem ilustrativa sobre a AiiT">
+            <p>A AiiT é uma empresa focada em criar soluções inovadoras utilizando as mais recentes tecnologias em Inteligência Artificial, Machine Learning e Robótica.</p>
+            <img src="sua-imagem-aqui.jpg" alt="Imagem ilustrativa sobre a AiiT" class="about-image">
         </div>
     </section>
 
-    <!-- Serviços -->
-    <section id="servicos">
+    <!-- Seção de Serviços -->
+    <section id="servicos" class="services-section">
         <div class="container">
-            <h2>Serviços</h2>
-            <div class="servicos-lista">
-                <div class="servico-item">
-                    <h3>Serviço 1</h3>
-                    <p>Descrição do serviço 1.</p>
+            <h2>Nossos Serviços</h2>
+            <div class="services-grid">
+                <div class="service-item">
+                    <h3>Consultoria em IA</h3>
+                    <p>Ajudamos sua empresa a implementar soluções de Inteligência Artificial.</p>
                 </div>
-                <div class="servico-item">
-                    <h3>Serviço 2</h3>
-                    <p>Descrição do serviço 2.</p>
+                <div class="service-item">
+                    <h3>Automação de Processos</h3>
+                    <p>Reduza custos e aumente a eficiência com automação inteligente.</p>
                 </div>
-                <div class="servico-item">
-                    <h3>Serviço 3</h3>
-                    <p>Descrição do serviço 3.</p>
+                <div class="service-item">
+                    <h3>Desenvolvimento Customizado</h3>
+                    <p>Desenvolvemos soluções sob medida para sua empresa.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Contato -->
-    <section id="contato">
+    <!-- Seção de Contato -->
+    <section id="contato" class="contact-section">
         <div class="container">
-            <h2>Contato</h2>
-            <form action="#" method="post">
+            <h2>Entre em Contato</h2>
+            <form action="#" method="post" class="contact-form">
                 <label for="nome">Nome:</label>
                 <input type="text" id="nome" name="nome" required>
 
@@ -74,22 +76,12 @@
                 <label for="mensagem">Mensagem:</label>
                 <textarea id="mensagem" name="mensagem" required></textarea>
 
-                <button type="submit">Enviar</button>
+                <button type="submit" class="cta-button">Enviar</button>
             </form>
-            <div class="contato-info">
+            <div class="contact-info">
                 <p>Email: <a href="mailto:contato@aiit.com">contato@aiit.com</a></p>
                 <p>Telefone: <a href="tel:+551112345678">(11) 1234-5678</a></p>
             </div>
-        </div>
-    </section>
-
-    <!-- Chatbot -->
-    <section id="chatbot">
-        <div class="chatbox-container">
-            <div class="chatbox-header">Chatbot de Suporte Online</div>
-            <div class="chatbox" id="chatbox"></div>
-            <input class="input-box" type="text" id="userInput" placeholder="Digite sua pergunta...">
-            <button class="input-button" onclick="sendMessage()">Enviar</button>
         </div>
     </section>
 
