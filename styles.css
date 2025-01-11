@@ -1,9 +1,16 @@
-/* styles.css */
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
+/* Resetando margens e padding */
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+}
+
+/* Fonte Padrão */
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    background-color: #f0f0f0;
+    color: #333;
 }
 
 /* Header */
@@ -11,165 +18,212 @@ header {
     background-color: #003366;
     color: white;
     padding: 20px 0;
-    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
+
 header h1 {
-    margin: 0;
-    font-size: 2.5em;
+    font-size: 2.5rem;
+    text-align: center;
+    font-weight: bold;
 }
-header nav {
-    margin: 20px 0;
-}
+
 header nav ul {
     list-style: none;
-    padding: 0;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }
+
 header nav ul li {
-    display: inline;
     margin: 0 15px;
 }
+
 header nav ul li a {
     color: white;
     text-decoration: none;
-    font-size: 1.1em;
+    font-size: 1.1rem;
+    text-transform: uppercase;
 }
+
 header nav ul li a:hover {
     text-decoration: underline;
 }
-header .cta-button {
-    background-color: #007BFF;
-    color: white;
-    padding: 10px 20px;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 1.1em;
-}
-header .cta-button:hover {
-    background-color: #0056b3;
-}
 
-/* Hero Section */
+/* Seção Hero */
 .hero {
-    background-color: #003366;
+    background-color: #0044cc;
     color: white;
     padding: 80px 20px;
     text-align: center;
+    margin-bottom: 50px;
 }
+
 .hero h2 {
-    margin: 0;
-    font-size: 2em;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
 }
 
-/* Sections */
-section {
-    padding: 40px 20px;
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
 }
 
-section h2 {
-    color: #003366;
-    text-align: center;
-    font-size: 2em;
+.cta-button {
+    background-color: #ff9900;
+    color: white;
+    padding: 15px 30px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    border-radius: 5px;
+    transition: background-color 0.3s;
 }
 
-section p {
-    text-align: center;
-    font-size: 1.1em;
+.cta-button:hover {
+    background-color: #ff6600;
 }
 
-/* Serviços */
-.servicos-lista {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-}
-.servico-item {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    padding: 20px;
-    margin: 10px;
-    border-radius: 8px;
-    width: 30%;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+/* Seção Sobre */
+.about-section {
+    padding: 60px 20px;
+    background-color: #ffffff;
     text-align: center;
 }
-.servico-item h3 {
-    color: #003366;
+
+.about-section h2 {
+    font-size: 2.2rem;
+    margin-bottom: 20px;
 }
 
-/* Contato */
-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.about-section p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }
-form input, form textarea {
+
+.about-image {
     width: 100%;
     max-width: 500px;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-form button {
-    padding: 10px 20px;
-    background-color: #003366;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-}
-form button:hover {
-    background-color: #007BFF;
+    height: auto;
+    margin-top: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Footer */
+/* Seção Serviços */
+.services-section {
+    background-color: #eeeeee;
+    padding: 60px 20px;
+}
+
+.services-section h2 {
+    font-size: 2.2rem;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+    text-align: center;
+}
+
+.service-item {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.service-item h3 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.service-item p {
+    font-size: 1rem;
+}
+
+/* Seção Contato */
+.contact-section {
+    background-color: #ffffff;
+    padding: 60px 20px;
+}
+
+.contact-section h2 {
+    font-size: 2.2rem;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.contact-form {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-form input, .contact-form textarea {
+    padding: 15px;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.contact-form button {
+    background-color: #003366;
+    color: white;
+    padding: 15px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.contact-info {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.contact-info a {
+    color: #003366;
+    text-decoration: none;
+}
+
+.contact-info a:hover {
+    text-decoration: underline;
+}
+
+/* Rodapé */
 footer {
     background-color: #003366;
     color: white;
-    text-align: center;
     padding: 20px 0;
+    text-align: center;
 }
 
-/* Chatbot */
-.chatbox-container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    max-width: 600px;
-    margin: auto;
-    margin-bottom: 40px;
+footer p {
+    font-size: 1rem;
 }
-.chatbox-header {
-    color: #003366;
-    font-size: 1.5em;
-    font-weight: bold;
+
+footer .social-icons {
+    margin-top: 10px;
 }
-.chatbox {
-    width: 100%;
-    height: 300px;
-    border: 1px solid #ddd;
-    padding: 10px;
-    overflow-y: auto;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-}
-.input-box {
-    width: calc(100% - 90px);
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-}
-.input-button {
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 8px;
-    margin-left: 10px;
-}
-.input-button:hover {
-    background-color: #0056b3;
+
+/* Responsividade */
+@media (max-width: 768px) {
+    header nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
 }
