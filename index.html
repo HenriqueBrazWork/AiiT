@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
     <!-- Header / Menu de Navegação -->
     <header>
         <div class="container">
@@ -20,80 +19,20 @@
                     <li><a href="#contato">Contato</a></li>
                 </ul>
             </nav>
+            <a href="#servicos" class="cta-button">Conheça nossos Serviços</a>
         </div>
     </header>
 
-    <!-- Seção de Introdução -->
-    <section id="inicio" class="hero">
-        <div class="container">
-            <h2>Transformamos Desafios em Oportunidades com Soluções Inovadoras</h2>
-            <p>Descubra como nossas tecnologias podem levar sua empresa para o futuro!</p>
-            <a href="#servicos" class="cta-button">Saiba Mais</a>
-        </div>
-    </section>
+    <!-- Seção Chatbot -->
+    <div id="chatbot" class="chatbot-button">
+        <button onclick="openChat()">Fale com o Suporte</button>
+    </div>
 
-    <!-- Seção Sobre Nós -->
-    <section id="sobre" class="about-section">
-        <div class="container">
-            <h2>Sobre Nós</h2>
-            <p>A AiiT é uma empresa focada em criar soluções inovadoras utilizando as mais recentes tecnologias em Inteligência Artificial, Machine Learning e Robótica.</p>
-            <img src="sua-imagem-aqui.jpg" alt="Imagem ilustrativa sobre a AiiT" class="about-image">
-        </div>
-    </section>
-
-    <!-- Seção de Serviços -->
-    <section id="servicos" class="services-section">
-        <div class="container">
-            <h2>Nossos Serviços</h2>
-            <div class="services-grid">
-                <div class="service-item">
-                    <h3>Consultoria em IA</h3>
-                    <p>Ajudamos sua empresa a implementar soluções de Inteligência Artificial.</p>
-                </div>
-                <div class="service-item">
-                    <h3>Automação de Processos</h3>
-                    <p>Reduza custos e aumente a eficiência com automação inteligente.</p>
-                </div>
-                <div class="service-item">
-                    <h3>Desenvolvimento Customizado</h3>
-                    <p>Desenvolvemos soluções sob medida para sua empresa.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Seção de Contato -->
-    <section id="contato" class="contact-section">
-        <div class="container">
-            <h2>Entre em Contato</h2>
-            <form action="#" method="post" class="contact-form">
-                <label for="nome">Nome:</label>
-                <input type="text" id="nome" name="nome" required>
-
-                <label for="email">E-mail:</label>
-                <input type="email" id="email" name="email" required>
-
-                <label for="mensagem">Mensagem:</label>
-                <textarea id="mensagem" name="mensagem" required></textarea>
-
-                <button type="submit" class="cta-button">Enviar</button>
-            </form>
-            <div class="contact-info">
-                <p>Email: <a href="mailto:contato@aiit.com">contato@aiit.com</a></p>
-                <p>Telefone: <a href="tel:+551112345678">(11) 1234-5678</a></p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Rodapé -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 AiiT - Todos os direitos reservados.</p>
-            <div class="social-icons">
-                <!-- Coloque os links das redes sociais aqui -->
-            </div>
-        </div>
-    </footer>
+    <div id="chat-window" class="chat-window">
+        <div id="chatbox" class="chatbox"></div>
+        <input type="text" id="userInput" placeholder="Digite sua mensagem...">
+        <button id="sendButton">Enviar</button>
+    </div>
 
     <script src="scripts.js"></script>
 </body>
