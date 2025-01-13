@@ -28,6 +28,7 @@
     <section id="inicio" class="hero">
         <div class="hero-content">
             <h2>Soluções inovadoras para transformar desafios em oportunidades</h2>
+            <img src="/path/to/AiiT-image.png" alt="AiiT - Soluções Tecnológicas" class="hero-img">
             <a href="#servicos" class="cta-button">Saiba Mais</a>
         </div>
     </section>
@@ -86,6 +87,7 @@
                 <div class="servico-item">
                     <h3>Desenvolvimento de Chatbots e Assistentes Virtuais</h3>
                     <p>Desenvolvemos chatbots e assistentes virtuais que utilizam IA para automatizar atendimento ao cliente e processos internos.</p>
+                    <button class="chatbot-button" onclick="openChatbot()">Testar Chatbot</button>
                 </div>
                 <!-- Integração de Sistemas de IA com Infraestrutura Existente -->
                 <div class="servico-item">
@@ -132,5 +134,34 @@
     </footer>
 
     <script src="scripts.js"></script>
+    <script>
+        function openChatbot() {
+            const chatbot = document.createElement('div');
+            chatbot.id = 'chatbot';
+            chatbot.innerHTML = `
+                <div class="chatbot-header">
+                    <h3>Chatbot AiiT</h3>
+                    <button onclick="closeChatbot()">X</button>
+                </div>
+                <div class="chatbot-body">
+                    <p>Olá! Como posso ajudar?</p>
+                    <textarea id="chat-input" placeholder="Digite sua mensagem..."></textarea>
+                    <button onclick="sendMessage()">Enviar</button>
+                </div>
+            `;
+            document.body.appendChild(chatbot);
+        }
+
+        function closeChatbot() {
+            const chatbot = document.getElementById('chatbot');
+            chatbot.remove();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            alert(`Você digitou: ${input.value}`);
+            input.value = '';
+        }
+    </script>
 </body>
 </html>
