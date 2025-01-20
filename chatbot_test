@@ -1,0 +1,123 @@
+import os
+from datasets import load_dataset
+from transformers import AutoTokenizer, AutoModelForCausalLM, Trainer, TrainingArguments
+import torch
+import json
+
+
+# Configurar ambiente para gerenciar memória CUDA
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
+# Carregar tokenizer e modelo
+tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.2-1B")
+tokenizer.pad_token = tokenizer.eos_token
+model = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Llama-3.2-1B",
+    device_map="auto",  # Ajustar para melhor uso de memória
+    torch_dtype=torch.float16
+)
+
+# Desativar gradient_checkpointing se necessário
+model.gradient_checkpointing_enable()
+
+# Carregar dataset JSON
+with open("/kaggle/input/base-de-dados/base_de_dados.json", "r", encoding="utf-8") as f:
+    json_data = json.load(f)
+
+# Carregar dataset Wikipedia em português (filtrar 1% para economizar memória)
+dataset_wikipedia = load_dataset("bigscience-data/roots_pt_wikipedia", split="train[:10%]")
+
+# Dividir dataset Wikipedia em treino e validação
+train_size = int(0.9 * len(dataset_wikipedia))
+train_wikipedia = dataset_wikipedia.select(range(train_size))
+test_wikipedia = dataset_wikipedia.select(range(train_size, len(dataset_wikipedia)))
+
+# Pré-processar dados da Wikipedia
+def preprocess_wikipedia(examples):
+    tokenized = tokenizer(examples["text"], truncation=True, max_length=512, padding="max_length")
+    return {
+        "input_ids": tokenized["input_ids"],
+        "attention_mask": tokenized["attention_mask"]
+    }
+
+train_wikipedia = train_wikipedia.map(preprocess_wikipedia, batched=True)
+test_wikipedia = test_wikipedia.map(preprocess_wikipedia, batched=True)
+
+# Pré-processar dados JSON
+def preprocess_json(json_data):
+    inputs, outputs = [], []
+    for category, subcategories in json_data["categories"].items():
+        for subcategory, content in subcategories.items():
+            for example in content["input_examples"]:
+                inputs.append(f"{example}")
+                outputs.append(content["output"])
+    return inputs, outputs
+
+json_inputs, json_outputs = preprocess_json(json_data)
+tokenized_inputs = tokenizer(json_inputs, truncation=True, padding="max_length", max_length=512)
+tokenized_outputs = tokenizer(json_outputs, truncation=True, padding="max_length", max_length=512)
+
+# Criar dataset combinado
+class CombinedDataset(torch.utils.data.Dataset):
+    def __init__(self, wikipedia, inputs, outputs):
+        self.wikipedia = wikipedia
+        self.inputs = inputs
+        self.outputs = outputs
+
+    def __len__(self):
+        return len(self.wikipedia) + len(self.inputs["input_ids"])
+
+    def __getitem__(self, idx):
+        if idx < len(self.wikipedia):
+            return {
+                "input_ids": torch.tensor(self.wikipedia[idx]["input_ids"], dtype=torch.long),
+                "attention_mask": torch.tensor(self.wikipedia[idx]["attention_mask"], dtype=torch.long),
+                "labels": torch.tensor(self.wikipedia[idx]["input_ids"], dtype=torch.long)
+            }
+        else:
+            json_idx = idx - len(self.wikipedia)
+            return {
+                "input_ids": torch.tensor(self.inputs["input_ids"][json_idx], dtype=torch.long),
+                "attention_mask": torch.tensor(self.inputs["attention_mask"][json_idx], dtype=torch.long),
+                "labels": torch.tensor(self.outputs["input_ids"][json_idx], dtype=torch.long)
+            }
+
+train_combined_dataset = CombinedDataset(train_wikipedia, tokenized_inputs, tokenized_outputs)
+eval_combined_dataset = CombinedDataset(test_wikipedia, tokenized_inputs, tokenized_outputs)
+
+# Configurar treinamento com otimizações
+training_args = TrainingArguments(
+    output_dir="./results",
+    eval_strategy="steps",
+    eval_steps=500,
+    per_device_train_batch_size=1,
+    gradient_accumulation_steps=16,
+    per_device_eval_batch_size=1,
+    num_train_epochs=3,
+    save_steps=1000,
+    save_total_limit=2,
+    bf16=torch.cuda.is_bf16_supported(),
+    fp16=(not torch.cuda.is_bf16_supported()),
+    logging_dir="./logs",
+    logging_steps=100,
+    report_to="none",
+    lr_scheduler_type="cosine",
+    learning_rate=3e-5,
+    warmup_steps=500,
+    max_grad_norm=1.0
+)
+
+# Configurar Trainer
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=train_combined_dataset,
+    eval_dataset=eval_combined_dataset
+)
+
+# Treinar modelo
+trainer.train()
+
+# Salvar modelo e tokenizer
+model.save_pretrained("./chatbot_model")
+tokenizer.save_pretrained("./chatbot_model")
