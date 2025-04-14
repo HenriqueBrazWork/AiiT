@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 import torch
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 # Carregar o modelo GPT-2 da Hugging Face
 model_name = "gpt2"  # Pode substituir por outro modelo como 'distilgpt2'
