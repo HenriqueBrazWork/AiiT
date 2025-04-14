@@ -17,7 +17,7 @@ async function sendMessage() {
 
     try {
         // Fazer a chamada para o backend que se comunica com a API da OpenAI
-        const response = await fetch('https://127.0.0.1:8000/chat', {  // Substitua o URL pelo endpoint da sua API
+        const response = await fetch('https://127.0.0.1:8000/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ function displayMessage(message, sender) {
     messageElement.classList.add('chat-message', sender);
     messageElement.textContent = message;
     chatbox.appendChild(messageElement);
-    chatbox.scrollTop = chatbox.scrollHeight; // Rolar para o final da caixa de chat
+    chatbox.scrollTop = chatbox.scrollHeight;
 }
 
 // Evento para enviar a mensagem quando o botão é clicado
@@ -62,3 +62,15 @@ document.getElementById('userInput').addEventListener('keypress', function (e) {
         sendMessage();
     }
 });
+
+// Função para abrir o modal do chatbot
+function openChatbot() {
+    const modal = document.getElementById("chatbot-modal");
+    modal.style.display = "block";
+}
+
+// Função para fechar o modal do chatbot
+function closeChatbot() {
+    const modal = document.getElementById("chatbot-modal");
+    modal.style.display = "none";
+}
