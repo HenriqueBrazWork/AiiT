@@ -1,175 +1,84 @@
-/* Resetando alguns estilos padrão */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* RESET BÁSICO */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Roboto', sans-serif; background: #fff; color: #333; scroll-behavior: smooth; }
+.container { width: 90%; max-width: 1100px; margin: 0 auto; }
+\ /* HEADER FIXO */
+#header { position: fixed; top: 0; left: 0; right: 0; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 1000; }
+#header .container { display: flex; align-items: center; justify-content: space-between; padding: 1rem 0; }
+#header nav ul { list-style: none; display: flex; gap: 1rem; }
+#header nav a { text-decoration: none; color: #333; font-weight: 500; }
 
-/* Cor de fundo padrão e fontes */
-body {
-    font-family: 'Roboto', sans-serif;
-    line-height: 1.6;
-    color: #333;
-    background-color: #f4f4f4;
-}
-
-/* Header */
-#header {
-    background: #333;
-    color: #fff;
-    padding: 20px 0;
-    text-align: center;
-}
-
-#header h1 {
-    font-size: 2.5rem;
-}
-
-#header nav ul {
-    list-style-type: none;
-    margin-top: 20px;
-}
-
-#header nav ul li {
-    display: inline-block;
-    margin: 0 15px;
-}
-
-#header nav ul li a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 1.2rem;
-}
-
+/* BOTÃO CTA */
 .cta-button {
     background: #007BFF;
-    color: white;
-    padding: 10px 20px;
-    text-decoration: none;
-    font-weight: bold;
-    border-radius: 5px;
+    color: #fff;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.3s, background 0.3s;
 }
+.cta-button:hover { background: #0056b3; transform: scale(1.05); }
 
-.cta-button:hover {
-    background: #0056b3;
-}
+/* HERO */
+.hero { padding: 120px 0 60px; text-align: center; }
+.hero-content h2 { font-size: 2rem; margin-bottom: 1rem; }
+.hero-img { max-width: 100%; height: auto; border-radius: 8px; }
 
-/* Seção Hero */
-.hero {
-    background: #007BFF;
-    color: white;
-    padding: 60px 20px;
-    text-align: center;
-}
+/* SEÇÕES */
+.section { padding: 80px 0; }
+.section h2 { text-align: center; margin-bottom: 2rem; font-size: 1.8rem; }
 
-.hero h2 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-}
-
-.hero .hero-img {
-    max-width: 100%;
-    height: auto;
-    margin: 20px 0;
-}
-
-/* Seção de Serviços */
-#servicos {
-    padding: 60px 20px;
-    text-align: center;
-    background: #fff;
-}
-
-#servicos h2 {
-    font-size: 2.5rem;
-    margin-bottom: 30px;
-}
-
+/* SERVIÇOS */
 .servicos-lista {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
 }
+.servico-item { background: #f9f9f9; padding: 1.5rem; border-radius: 8px; }
 
-.servico-item {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+/* IFRAME DO CHATBOT */
+.chatbot-frame { margin-top: 1rem; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+
+/* FORMULÁRIO CONTATO */
+.form-contato {
+    display: grid;
+    gap: 1rem;
+    max-width: 500px;
+    margin: 0 auto;
 }
-
-.servico-item h3 {
-    font-size: 1.8rem;
-    margin-bottom: 15px;
-}
-
-.servico-item p {
-    font-size: 1rem;
-}
-
-/* Modal para o chatbot */
-.modal {
-    display: none; /* Oculto por padrão */
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.chatbox {
-    height: 300px;
-    overflow-y: auto;
+.form-contato input,
+.form-contato textarea {
+    padding: 0.8rem;
     border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 10px;
+    border-radius: 4px;
+    width: 100%;
 }
 
-.chat-message {
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
-}
+/* RODAPÉ */
+footer { background: #222; color: #fff; padding: 1rem 0; text-align: center; }
+footer .social-icons a { margin: 0 0.5rem; color: #fff; text-decoration: none; }
 
-.user {
-    background-color: #dcf8c6;
-    text-align: right;
+/* CARROSSEL DE DEPOIMENTOS */
+.testimonial-carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1rem;
+    padding: 1rem 0;
 }
-
-.bot {
-    background-color: #e0e0e0;
+.testimonial {
+    flex: 0 0 80%;
+    scroll-snap-align: start;
+    background: #eef;
+    padding: 1.5rem;
+    border-radius: 8px;
 }
+.testimonial p:last-child { margin-top: 0.5rem; font-style: italic; }
 
-/* Footer */
-footer {
-    background: #333;
-    color: white;
-    text-align: center;
-    padding: 20px 0;
+/* MEDIA QUERIES */
+@media(max-width: 768px) {
+    .hero-content h2 { font-size: 1.5rem; }
+    #header nav ul { flex-direction: column; background: #fff; position: absolute; top: 60px; right: 0; padding: 1rem; display: none; }
+    #header nav ul.show { display: flex; }
 }
