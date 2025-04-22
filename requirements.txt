@@ -1,0 +1,3 @@
+streamlit
+transformers
+torch  # Necessário para rodar os modelos do Hugging Face
