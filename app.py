@@ -1,94 +1,111 @@
 import streamlit as st
 import torch
 from transformers import pipeline
-from PIL import Image
 
-# Determine device
-device = -1
+# Verificar se GPU está disponível
+device = 0 if torch.cuda.is_available() else -1
 
-# Load pipelines
-#@st.cache_resource
-def load_pipelines():
-    return {
-        "sentiment": pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment", device=device),
-        "summarizer": pipeline("summarization", model="facebook/bart-large-cnn", device=device),
-        "image_clf": pipeline("image-classification", model="microsoft/resnet-50", device=device),
-        "asr": pipeline("automatic-speech-recognition", model="facebook/wav2vec2-large-960h-lv60-self", device=device),
-        "sentiment_en": pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english", device=device),
-        "translator": pipeline("translation", model="Helsinki-NLP/opus-mt-tc-big-en-pt", device=device),
-        "qa": pipeline("question-answering", model="deepset/roberta-base-squad2", device=device)
-    }
+# Carregar os modelos com a opção de usar GPU se disponível
+sentiment_model = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment", device=device)
+classification_model = pipeline("text-classification", model="distilbert-base-uncased-finetuned-sst-2-english", device=device)
+summarizer = pipeline("summarization", model="t5-small", tokenizer="t5-small", device=device)
+chatbot = pipeline("text-generation", model="gpt2", device=device)
+image_classifier = pipeline("image-classification", model="google/vit-base-patch16-224-in21k", device=device)
+audio_classifier = pipeline("audio-classification", model="facebook/wav2vec2-large-xlsr-53", device=device)
+speech_to_text = pipeline("automatic-speech-recognition", model="facebook/wav2vec2-large-xlsr-53", device=device)
+object_detection = pipeline("object-detection", model="facebook/detectron2", device=device)
+question_answering = pipeline("question-answering", model="deepset/roberta-base-squad2", device=device)
+translation = pipeline("translation_en_to_fr", model="t5-small", device=device)
 
-pipes = load_pipelines()
+# Título da App
+st.title("\U0001F4A1 Aplicação de Serviços de IA e Robótica")
 
-st.title("💼 Exemplos de Soluções de Mercado com IA")
-
-task = st.sidebar.selectbox("Selecionar solução de mercado:", [
-    "1. Análise de Sentimentos (E-commerce)",
-    "2. Resumo de Artigo (Mídia)",
-    "3. Classificação de Imagens (Indústria)",
-    "4. Transcrição e Sentimento (Call Center)",
-    "5. Tradução de Descrição de Produto",
-    "6. Perguntas & Respostas (FAQ)"
+# Menu lateral para selecionar o serviço
+menu = st.sidebar.radio("Escolha um serviço:", [
+    "Análise de Sentimentos",
+    "Classificação de Texto",
+    "Resumos Automáticos",
+    "Desenvolvimento de Chatbots",
+    "Classificação de Imagens",
+    "Análise de Áudio",
+    "Transcrição de Fala",
+    "Detecção de Objetos",
+    "Resposta a Perguntas",
+    "Tradução Automática"
 ])
 
-if task.startswith("1"):
-    st.header("Análise de Sentimentos de Reviews")
-    reviews = st.text_area("Insira as avaliações (uma por linha):")
-    if st.button("Analisar Sentimentos"):
-        texts = [r for r in reviews.split("\n") if r.strip()]
-        with st.spinner("Analisando..."):
-            results = [pipes["sentiment"](text)[0] for text in texts]
-        for text, res in zip(texts, results):
-            st.write(f"> **{text}** → {res['label']} ({res['score']:.2f})")
+# Funções específicas para cada serviço
+if menu == "Análise de Sentimentos":
+    st.write("**Análise de Sentimentos**: Descubra como as pessoas estão se sentindo sobre um tópico ou conteúdo.")
+    user_input = st.text_area("Digite o texto para análise de sentimentos:")
+    if st.button("Analisar Sentimento"):
+        result = sentiment_model(user_input)
+        st.write(f"Resultado da Análise de Sentimentos: {result}")
 
-elif task.startswith("2"):
-    st.header("Resumo Automático de Artigo")
-    article = st.text_area("Cole o texto do artigo:")
+elif menu == "Classificação de Texto":
+    st.write("**Classificação de Texto**: Classifique o texto em categorias específicas.")
+    user_input = st.text_area("Digite o texto para classificação:")
+    if st.button("Classificar Texto"):
+        result = classification_model(user_input)
+        st.write(f"Resultado da Classificação: {result}")
+
+elif menu == "Resumos Automáticos":
+    st.write("**Resumos Automáticos**: Resuma textos longos de forma rápida e eficiente.")
+    user_input = st.text_area("Digite o texto para resumo:")
     if st.button("Gerar Resumo"):
-        with st.spinner("Sumarizando..."):
-            summary = pipes["summarizer"](article, max_length=60, min_length=20, do_sample=False)[0]["summary_text"]
-        st.success(summary)
+        result = summarizer(user_input, max_length=150, min_length=40, do_sample=False)
+        st.write(f"Resumo Gerado: {result[0]['summary_text']}")
 
-elif task.startswith("3"):
-    st.header("Classificação de Imagens para Controle de Qualidade")
-    uploaded_image = st.file_uploader("Envie uma imagem da peça:", type=["jpg","png","jpeg"])
-    if uploaded_image:
-        img = Image.open(uploaded_image)
-        st.image(img, use_column_width=True)
-        if st.button("Classificar Imagem"):
-            with st.spinner("Classificando..."):
-                preds = pipes["image_clf"](img)
-            st.json(preds)
+elif menu == "Desenvolvimento de Chatbots":
+    st.write("**Desenvolvimento de Chatbots**: Converse com um chatbot inteligente.")
+    user_message = st.text_input("Digite sua pergunta:")
+    if st.button("Enviar"):
+        response = chatbot(user_message, max_length=60, num_return_sequences=1)
+        st.write(f"Resposta do Chatbot: {response[0]['generated_text']}")
 
-elif task.startswith("4"):
-    st.header("Transcrição e Sentimento de Áudio (Call Center)")
-    uploaded_audio = st.file_uploader("Envie um áudio de chamada:", type=["wav","mp3"])
-    if uploaded_audio:
-        st.audio(uploaded_audio)
-        if st.button("Transcrever + Analisar Sentimento"):
-            with st.spinner("Processando áudio..."):
-                transcript = pipes["asr"](uploaded_audio)["text"]
-                sentiment = pipes["sentiment_en"](transcript)[0]
-            st.subheader("Transcrição")
-            st.write(transcript)
-            st.subheader("Sentimento")
-            st.write(f"{sentiment['label']} ({sentiment['score']:.2f})")
+elif menu == "Classificação de Imagens":
+    st.write("**Classificação de Imagens**: Classifique uma imagem com base em categorias predefinidas.")
+    uploaded_image = st.file_uploader("Carregue uma imagem para classificação", type=["jpg", "jpeg", "png"])
+    if uploaded_image is not None:
+        st.image(uploaded_image, caption="Imagem carregada", use_column_width=True)
+        result = image_classifier(uploaded_image)
+        st.write(f"Classificação da Imagem: {result}")
 
-elif task.startswith("5"):
-    st.header("Tradução de Descrição de Produto (EN→PT)")
-    desc = st.text_area("Descrição em Inglês:")
-    if st.button("Traduzir"):
-        with st.spinner("Traduzindo..."):
-            tr = pipes["translator"](desc)[0]["translation_text"]
-        st.success(tr)
+elif menu == "Análise de Áudio":
+    st.write("**Análise de Áudio**: Classifique áudios em diferentes categorias.")
+    uploaded_audio = st.file_uploader("Carregue um arquivo de áudio para classificação", type=["mp3", "wav"])
+    if uploaded_audio is not None:
+        st.audio(uploaded_audio, format="audio/wav")
+        result = audio_classifier(uploaded_audio)
+        st.write(f"Classificação do Áudio: {result}")
 
-elif task.startswith("6"):
-    st.header("Sistema de Perguntas & Respostas (FAQ)")
-    context = st.text_area("Contexto / Documento:")
-    question = st.text_input("Pergunta:")
+elif menu == "Transcrição de Fala":
+    st.write("**Transcrição de Fala**: Converta fala em texto automaticamente.")
+    uploaded_audio = st.file_uploader("Carregue um arquivo de áudio para transcrição", type=["mp3", "wav"])
+    if uploaded_audio is not None:
+        st.audio(uploaded_audio, format="audio/wav")
+        result = speech_to_text(uploaded_audio)
+        st.write(f"Texto Transcrito: {result['text']}")
+
+elif menu == "Detecção de Objetos":
+    st.write("**Detecção de Objetos**: Detecte objetos em imagens enviadas.")
+    uploaded_image = st.file_uploader("Carregue uma imagem para detectar objetos", type=["jpg", "jpeg", "png"])
+    if uploaded_image is not None:
+        st.image(uploaded_image, caption="Imagem carregada", use_column_width=True)
+        result = object_detection(uploaded_image)
+        st.write(f"Objetos Detectados: {result}")
+
+elif menu == "Resposta a Perguntas":
+    st.write("**Resposta a Perguntas**: Pergunte algo e receba uma resposta com base em um conjunto de dados.")
+    context = st.text_area("Digite o contexto para perguntas:")
+    question = st.text_input("Digite a pergunta:")
     if st.button("Responder"):
-        with st.spinner("Buscando resposta..."):
-            ans = pipes["qa"](question=question, context=context)["answer"]
-        st.subheader("Resposta")
-        st.write(ans)
+        result = question_answering(question=question, context=context)
+        st.write(f"Resposta: {result['answer']}")
+
+elif menu == "Tradução Automática":
+    st.write("**Tradução Automática**: Traduza textos de inglês para francês automaticamente.")
+    user_input = st.text_area("Digite o texto em inglês para traduzir:")
+    if st.button("Traduzir"):
+        result = translation(user_input)
+        st.write(f"Texto Traduzido: {result[0]['translation_text']}")
