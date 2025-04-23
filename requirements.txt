@@ -1,7 +1,7 @@
 # Backends e modelos
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch
-transformers
+transformers>=4.26.0
 sentencepiece
 torchaudio
 librosa
