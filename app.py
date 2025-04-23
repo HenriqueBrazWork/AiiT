@@ -1,24 +1,31 @@
 import streamlit as st
+from transformers import pipeline, AutoProcessor, AutoModelForPreTraining
 import torch
-from transformers import pipeline
 
-# Verificar se GPU está disponível
 device = 0 if torch.cuda.is_available() else -1
 
-# Carregar os modelos com a opção de usar GPU se disponível
-sentiment_model = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment", device=device)
-classification_model = pipeline("text-classification", model="distilbert-base-uncased-finetuned-sst-2-english", device=device)
-summarizer = pipeline("summarization", model="t5-small", tokenizer="t5-small", device=device)
-chatbot = pipeline("text-generation", model="gpt2", device=device)
-image_classifier = pipeline("image-classification", model="google/vit-base-patch16-224-in21k", device=device)
-audio_classifier = pipeline("audio-classification", model="facebook/wav2vec2-large-xlsr-53", device=device)
-speech_to_text = pipeline("automatic-speech-recognition", model="facebook/wav2vec2-large-xlsr-53", device=device)
-object_detection = pipeline("object-detection", model="facebook/detectron2", device=device)
-question_answering = pipeline("question-answering", model="deepset/roberta-base-squad2", device=device)
-translation = pipeline("translation_en_to_fr", model="t5-small", device=device)
+# Carregar os modelos de IA com @st.cache_resource para eficiência
+@st.cache_resource
+def load_models():
+    models = {
+        'sentiment_analysis': pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment", device=device),
+        'text_classification': pipeline("text-classification", model="distilbert-base-uncased-finetuned-sst-2-english", device=device),
+        'summarization': pipeline("summarization", model="t5-small", tokenizer="t5-small", device=device),
+        'chatbot': pipeline("text-generation", model="gpt2", device=device),
+        'image_classifier': pipeline("image-classification", model="google/vit-base-patch16-224-in21k", device=device),
+        'audio_classifier': pipeline("audio-classification", model="facebook/wav2vec2-large-xlsr-53", device=device),
+        'speech_to_text': pipeline("automatic-speech-recognition", model="facebook/wav2vec2-large-xlsr-53", device=device),
+        'object_detection': pipeline("object-detection", model="facebook/detectron2", device=device),
+        'question_answering': pipeline("question-answering", model="deepset/roberta-base-squad2", device=device),
+        'translation': pipeline("translation_en_to_fr", model="t5-small", device=device)
+    }
+    return models
+
+# Carregar todos os modelos
+models = load_models()
 
 # Título da App
-st.title("\U0001F4A1 Aplicação de Serviços de IA e Robótica")
+st.title("💡 Aplicação de Serviços de IA e Robótica")
 
 # Menu lateral para selecionar o serviço
 menu = st.sidebar.radio("Escolha um serviço:", [
@@ -36,76 +43,96 @@ menu = st.sidebar.radio("Escolha um serviço:", [
 
 # Funções específicas para cada serviço
 if menu == "Análise de Sentimentos":
-    st.write("**Análise de Sentimentos**: Descubra como as pessoas estão se sentindo sobre um tópico ou conteúdo.")
+    st.write("""
+        **Análise de Sentimentos**: Descubra como as pessoas estão se sentindo sobre um tópico ou conteúdo.
+    """)
     user_input = st.text_area("Digite o texto para análise de sentimentos:")
     if st.button("Analisar Sentimento"):
-        result = sentiment_model(user_input)
+        result = models['sentiment_analysis'](user_input)
         st.write(f"Resultado da Análise de Sentimentos: {result}")
 
 elif menu == "Classificação de Texto":
-    st.write("**Classificação de Texto**: Classifique o texto em categorias específicas.")
+    st.write("""
+        **Classificação de Texto**: Classifique o texto em categorias específicas.
+    """)
     user_input = st.text_area("Digite o texto para classificação:")
     if st.button("Classificar Texto"):
-        result = classification_model(user_input)
+        result = models['text_classification'](user_input)
         st.write(f"Resultado da Classificação: {result}")
 
 elif menu == "Resumos Automáticos":
-    st.write("**Resumos Automáticos**: Resuma textos longos de forma rápida e eficiente.")
+    st.write("""
+        **Resumos Automáticos**: Resuma textos longos de forma rápida e eficiente.
+    """)
     user_input = st.text_area("Digite o texto para resumo:")
     if st.button("Gerar Resumo"):
-        result = summarizer(user_input, max_length=150, min_length=40, do_sample=False)
+        result = models['summarization'](user_input)
         st.write(f"Resumo Gerado: {result[0]['summary_text']}")
 
 elif menu == "Desenvolvimento de Chatbots":
-    st.write("**Desenvolvimento de Chatbots**: Converse com um chatbot inteligente.")
+    st.write("""
+        **Desenvolvimento de Chatbots**: Converse com um chatbot inteligente.
+    """)
     user_message = st.text_input("Digite sua pergunta:")
     if st.button("Enviar"):
-        response = chatbot(user_message, max_length=60, num_return_sequences=1)
+        response = models['chatbot'](user_message, max_length=60, num_return_sequences=1)
         st.write(f"Resposta do Chatbot: {response[0]['generated_text']}")
 
 elif menu == "Classificação de Imagens":
-    st.write("**Classificação de Imagens**: Classifique uma imagem com base em categorias predefinidas.")
+    st.write("""
+        **Classificação de Imagens**: Classifique uma imagem com base em categorias predefinidas.
+    """)
     uploaded_image = st.file_uploader("Carregue uma imagem para classificação", type=["jpg", "jpeg", "png"])
     if uploaded_image is not None:
         st.image(uploaded_image, caption="Imagem carregada", use_column_width=True)
-        result = image_classifier(uploaded_image)
+        result = models['image_classifier'](uploaded_image)
         st.write(f"Classificação da Imagem: {result}")
 
 elif menu == "Análise de Áudio":
-    st.write("**Análise de Áudio**: Classifique áudios em diferentes categorias.")
+    st.write("""
+        **Análise de Áudio**: Classifique áudios em diferentes categorias.
+    """)
     uploaded_audio = st.file_uploader("Carregue um arquivo de áudio para classificação", type=["mp3", "wav"])
     if uploaded_audio is not None:
         st.audio(uploaded_audio, format="audio/wav")
-        result = audio_classifier(uploaded_audio)
+        result = models['audio_classifier'](uploaded_audio)
         st.write(f"Classificação do Áudio: {result}")
 
 elif menu == "Transcrição de Fala":
-    st.write("**Transcrição de Fala**: Converta fala em texto automaticamente.")
+    st.write("""
+        **Transcrição de Fala**: Converta fala em texto automaticamente.
+    """)
     uploaded_audio = st.file_uploader("Carregue um arquivo de áudio para transcrição", type=["mp3", "wav"])
     if uploaded_audio is not None:
         st.audio(uploaded_audio, format="audio/wav")
-        result = speech_to_text(uploaded_audio)
+        result = models['speech_to_text'](uploaded_audio)
         st.write(f"Texto Transcrito: {result['text']}")
 
 elif menu == "Detecção de Objetos":
-    st.write("**Detecção de Objetos**: Detecte objetos em imagens enviadas.")
+    st.write("""
+        **Detecção de Objetos**: Detecte objetos em imagens enviadas.
+    """)
     uploaded_image = st.file_uploader("Carregue uma imagem para detectar objetos", type=["jpg", "jpeg", "png"])
     if uploaded_image is not None:
         st.image(uploaded_image, caption="Imagem carregada", use_column_width=True)
-        result = object_detection(uploaded_image)
+        result = models['object_detection'](uploaded_image)
         st.write(f"Objetos Detectados: {result}")
 
 elif menu == "Resposta a Perguntas":
-    st.write("**Resposta a Perguntas**: Pergunte algo e receba uma resposta com base em um conjunto de dados.")
+    st.write("""
+        **Resposta a Perguntas**: Pergunte algo e receba uma resposta com base em um conjunto de dados.
+    """)
     context = st.text_area("Digite o contexto para perguntas:")
     question = st.text_input("Digite a pergunta:")
     if st.button("Responder"):
-        result = question_answering(question=question, context=context)
+        result = models['question_answering'](question=question, context=context)
         st.write(f"Resposta: {result['answer']}")
 
 elif menu == "Tradução Automática":
-    st.write("**Tradução Automática**: Traduza textos de inglês para francês automaticamente.")
+    st.write("""
+        **Tradução Automática**: Traduza textos de inglês para francês automaticamente.
+    """)
     user_input = st.text_area("Digite o texto em inglês para traduzir:")
     if st.button("Traduzir"):
-        result = translation(user_input)
+        result = models['translation'](user_input)
         st.write(f"Texto Traduzido: {result[0]['translation_text']}")
