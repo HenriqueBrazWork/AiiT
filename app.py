@@ -1,5 +1,6 @@
 import streamlit as st
 from transformers import pipeline
+import torch
 
 device = 0 if torch.cuda.is_available() else -1
 # Carregar os modelos de IA relevantes para cada serviço
