@@ -7,6 +7,7 @@ torchaudio
 librosa
 soundfile
 protobuf==3.20.*
+pyaudio
 
 # App e utilitários
 streamlit
