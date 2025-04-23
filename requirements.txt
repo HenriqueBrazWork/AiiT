@@ -6,7 +6,7 @@ sentencepiece
 torchaudio
 librosa
 soundfile
-protobuf
+protobuf==3.20.*
 
 # App e utilitários
 streamlit
