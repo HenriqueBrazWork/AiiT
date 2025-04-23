@@ -4,7 +4,7 @@ from transformers import pipeline
 from PIL import Image
 
 # Determine device
-device = 0 if torch.cuda.is_available() else -1
+device = -1
 
 # Load pipelines
 @st.cache_resource
