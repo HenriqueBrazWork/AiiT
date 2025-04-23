@@ -1,6 +1,8 @@
 import streamlit as st
-from transformers import pipeline, AutoProcessor, AutoModelForPreTraining
+from transformers import pipeline, AutoTokenizer, AutoModel, AutoImageProcessor, AutoModelForImageClassification, AutoProcessor
 import torch
+from PIL import Image
+import numpy as np
 
 device = 0 if torch.cuda.is_available() else -1
 
@@ -12,7 +14,10 @@ def load_models():
         'text_classification': pipeline("text-classification", model="distilbert-base-uncased-finetuned-sst-2-english", device=device),
         'summarization': pipeline("summarization", model="t5-small", tokenizer="t5-small", device=device),
         'chatbot': pipeline("text-generation", model="gpt2", device=device),
-        'image_classifier': pipeline("image-classification", model="google/vit-base-patch16-224-in21k", device=device),
+        'image_classifier': {
+            "processor": AutoImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k"),
+            "model": AutoModelForImageClassification.from_pretrained("google/vit-base-patch16-224-in21k")
+        },
         'audio_classifier': pipeline("audio-classification", model="facebook/wav2vec2-large-xlsr-53", device=device),
         'speech_to_text': pipeline("automatic-speech-recognition", model="facebook/wav2vec2-large-xlsr-53", device=device),
         'object_detection': pipeline("object-detection", model="facebook/detectron2", device=device),
@@ -23,6 +28,26 @@ def load_models():
 
 # Carregar todos os modelos
 models = load_models()
+
+# Função para processar a imagem com o modelo ViT
+def classify_image(image):
+    processor = models['image_classifier']['processor']
+    model = models['image_classifier']['model']
+    
+    # Preparando a imagem
+    inputs = processor(images=image, return_tensors="pt").to(device)
+    outputs = model(**inputs)
+    
+    # Obter as predições
+    logits = outputs.logits
+    predicted_class_idx = logits.argmax(-1).item()
+    
+    return predicted_class_idx
+
+# Função para processar o áudio com o modelo Wav2Vec
+def transcribe_audio(audio):
+    result = models['speech_to_text'](audio)
+    return result['text']
 
 # Título da App
 st.title("💡 Aplicação de Serviços de IA e Robótica")
@@ -84,9 +109,12 @@ elif menu == "Classificação de Imagens":
     """)
     uploaded_image = st.file_uploader("Carregue uma imagem para classificação", type=["jpg", "jpeg", "png"])
     if uploaded_image is not None:
-        st.image(uploaded_image, caption="Imagem carregada", use_column_width=True)
-        result = models['image_classifier'](uploaded_image)
-        st.write(f"Classificação da Imagem: {result}")
+        image = Image.open(uploaded_image)
+        st.image(image, caption="Imagem carregada", use_column_width=True)
+        
+        # Classificar a imagem usando o modelo ViT
+        class_idx = classify_image(image)
+        st.write(f"Classe prevista para a imagem: {class_idx}")
 
 elif menu == "Análise de Áudio":
     st.write("""
@@ -105,8 +133,8 @@ elif menu == "Transcrição de Fala":
     uploaded_audio = st.file_uploader("Carregue um arquivo de áudio para transcrição", type=["mp3", "wav"])
     if uploaded_audio is not None:
         st.audio(uploaded_audio, format="audio/wav")
-        result = models['speech_to_text'](uploaded_audio)
-        st.write(f"Texto Transcrito: {result['text']}")
+        result = transcribe_audio(uploaded_audio)
+        st.write(f"Texto Transcrito: {result}")
 
 elif menu == "Detecção de Objetos":
     st.write("""
