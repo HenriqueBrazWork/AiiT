@@ -1,6 +1,7 @@
 import streamlit as st
 from transformers import pipeline
 
+device = 0 if torch.cuda.is_available() else -1
 # Carregar os modelos de IA relevantes para cada serviço
 sentiment_model = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
 classification_model = pipeline("text-classification", model="distilbert-base-uncased-finetuned-sst-2-english")
