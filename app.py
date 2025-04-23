@@ -7,7 +7,7 @@ from PIL import Image
 device = -1
 
 # Load pipelines
-@st.cache_resource
+#@st.cache_resource
 def load_pipelines():
     return {
         "sentiment": pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment", device=device),
