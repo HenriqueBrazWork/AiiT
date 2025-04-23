@@ -18,8 +18,8 @@ def load_models():
             "processor": AutoImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k"),
             "model": AutoModelForImageClassification.from_pretrained("google/vit-base-patch16-224-in21k")
         },
-        'audio_classifier': pipeline("audio-classification", model="facebook/wav2vec2-large-xlsr-53", device=device),
-        'speech_to_text': pipeline("automatic-speech-recognition", model="facebook/wav2vec2-large-xlsr-53", device=device),
+        'audio_classifier': pipeline("audio-classification",processor = AutoProcessor.from_pretrained("facebook/wav2vec2-large-xlsr-53"), model="facebook/wav2vec2-large-xlsr-53", device=device),
+        'speech_to_text': pipeline("automatic-speech-recognition",processor = AutoProcessor.from_pretrained("facebook/wav2vec2-large-xlsr-53"), model="facebook/wav2vec2-large-xlsr-53", device=device),
         'object_detection': pipeline("object-detection", model="facebook/detectron2", device=device),
         'question_answering': pipeline("question-answering", model="deepset/roberta-base-squad2", device=device),
         'translation': pipeline("translation_en_to_fr", model="t5-small", device=device)
