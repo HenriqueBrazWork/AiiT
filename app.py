@@ -15,7 +15,7 @@ def load_pipelines():
         "image_clf": pipeline("image-classification", model="microsoft/resnet-50", device=device),
         "asr": pipeline("automatic-speech-recognition", model="facebook/wav2vec2-large-960h-lv60-self", device=device),
         "sentiment_en": pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english", device=device),
-        "translator": pipeline("translation", model="Helsinki-NLP/opus-mt-tc-big-en-pt"), device=device),
+        "translator": pipeline("translation", model="Helsinki-NLP/opus-mt-tc-big-en-pt", device=device),
         "qa": pipeline("question-answering", model="deepset/roberta-base-squad2", device=device)
     }
 
