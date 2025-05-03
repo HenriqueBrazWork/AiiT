@@ -16,8 +16,8 @@ models = {
         "model": AutoModelForImageClassification.from_pretrained("google/vit-base-patch16-224-in21k")
     },
     'audio_classifier': {
-        "processor": Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53"),
-        "model": Wav2Vec2ForSequenceClassification.from_pretrained("facebook/wav2vec2-large-xlsr-53")
+        "processor" = AutoProcessor.from_pretrained("facebook/wav2vec2-large-xlsr-53")
+        "model" = AutoModelForPreTraining.from_pretrained("facebook/wav2vec2-large-xlsr-53")
     },
     'speech_to_text': pipeline("automatic-speech-recognition", model="facebook/wav2vec2-large-xlsr-53", device=device),
     'object_detection': pipeline("object-detection", model="facebook/detectron2", device=device),
