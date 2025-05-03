@@ -9,7 +9,7 @@ device = 0 if torch.cuda.is_available() else -1
 models = {
     'sentiment_analysis': pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment", device=device),
     'text_classification': pipeline("text-classification", model="distilbert-base-uncased-finetuned-sst-2-english", device=device),
-    'summarization': pipeline("summarization", model="t5-small", tokenizer="t5-small", device=device),
+    'summarization': pipeline("summarization", model="t5-small", device=device),
     'chatbot': pipeline("text-generation", model="gpt2", device=device),
     'image_classifier': {
         "processor": AutoImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k"),
