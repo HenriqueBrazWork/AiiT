@@ -5,6 +5,6 @@ torchaudio
 librosa
 soundfile
 protobuf==3.20.*
-pyaudio
+pyaudio==0.2.14
 streamlit
 Pillow
