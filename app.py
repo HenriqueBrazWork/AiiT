@@ -1,3 +1,7 @@
+import asyncio
+import logging
+from aiortc import VideoStreamTrack, RTCPeerConnection, RTCSessionDescription
+from aiortc.contrib.media import MediaPlayer
 import streamlit as st
 from transformers import (
     pipeline, 
@@ -5,34 +9,66 @@ from transformers import (
     Wav2Vec2Processor, Wav2Vec2ForSequenceClassification
 )
 import torch
-import torchaudio
 from PIL import Image
+import torchaudio
 
-# Definir o dispositivo (GPU ou CPU)
-device = 0 if torch.cuda.is_available() else -1
+# Configuração de logging
+logging.basicConfig(level=logging.INFO)
 
-# Carregar os modelos
-models = {
-    'sentiment_analysis': pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment", device=device),
-    'text_classification': pipeline("text-classification", model="distilbert-base-uncased-finetuned-sst-2-english", device=device),
-    'summarization': pipeline("summarization", model="t5-small", device=device),
-    'chatbot': pipeline("text-generation", model="gpt2", device=device),
-    'image_classifier': {
-        "processor": AutoImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k"),
-        "model": AutoModelForImageClassification.from_pretrained("google/vit-base-patch16-224-in21k")
-    },
-    'audio_classifier': {
-        "processor": Wav2Vec2Processor.from_pretrained("superb/wav2vec2-base-superb-ks"),
-        "model": Wav2Vec2ForSequenceClassification.from_pretrained("superb/wav2vec2-base-superb-ks")
-    },
-    'speech_to_text': pipeline("automatic-speech-recognition", model="facebook/wav2vec2-large-xlsr-53", device=device),
-    'object_detection': pipeline("object-detection", model="facebook/detr-resnet-50", device=device),
-    'question_answering': pipeline("question-answering", model="deepset/roberta-base-squad2", device=device),
-    'translation': pipeline("translation_en_to_fr", model="t5-small", device=device)
-}
+# Função para criar os pipelines de IA (exemplo de vários modelos)
+def create_models():
+    device = 0 if torch.cuda.is_available() else -1
+    
+    models = {
+        'sentiment_analysis': pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment", device=device),
+        'text_classification': pipeline("text-classification", model="distilbert-base-uncased-finetuned-sst-2-english", device=device),
+        'summarization': pipeline("summarization", model="t5-small", device=device),
+        'chatbot': pipeline("text-generation", model="gpt2", device=device),
+        'image_classifier': {
+            "processor": AutoImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k"),
+            "model": AutoModelForImageClassification.from_pretrained("google/vit-base-patch16-224-in21k")
+        },
+        'speech_to_text': pipeline("automatic-speech-recognition", model="facebook/wav2vec2-large-xlsr-53", device=device),
+        'object_detection': pipeline("object-detection", model="facebook/detr-resnet-50", device=device),
+        'question_answering': pipeline("question-answering", model="deepset/roberta-base-squad2", device=device),
+        'translation': pipeline("translation_en_to_fr", model="t5-small", device=device)
+    }
+    
+    return models
+
+# Função WebRTC para lidar com a captura de áudio/vídeo
+class VideoTrack(VideoStreamTrack):
+    def __init__(self):
+        super().__init__()
+        self._player = MediaPlayer("video.mp4")  # Pode ser um arquivo de vídeo ou capturador de câmera
+
+    async def recv(self):
+        frame = self._player.next_frame()  # Captura o próximo frame do vídeo
+        return frame
+
+
+# Função principal para gerenciar a conexão WebRTC e usar IA
+async def run_webrtc():
+    pc = RTCPeerConnection()
+    
+    # Adicionar um track de vídeo ao PeerConnection
+    video_track = VideoTrack()
+    pc.addTrack(video_track)
+
+    # Configuração do offer (oferta para negociação da conexão)
+    offer = await pc.createOffer()
+    await pc.setLocalDescription(offer)
+
+    # Exemplo para integrar com o Streamlit (em uma aplicação real isso seria feito em um servidor WebRTC)
+    # Aqui você pode obter a resposta do cliente WebRTC
+    answer = RTCSessionDescription(sdp="YOUR_SDP_HERE", type="answer")
+    await pc.setRemoteDescription(answer)
+
+    # Iniciar o servidor WebRTC
+    await asyncio.gather(pc.wait_closed())
 
 # Função de uso dos modelos
-def use_model(model_key, input_text=None, input_audio=None, input_image=None):
+def use_model(model_key, models, input_text=None, input_audio=None, input_image=None):
     model = models[model_key]
 
     if model_key == 'sentiment_analysis' and input_text:
@@ -59,17 +95,6 @@ def use_model(model_key, input_text=None, input_audio=None, input_image=None):
         label = image_model.config.id2label[predicted_class_idx]
         return f"Classe prevista: {label}"
 
-    elif model_key == 'audio_classifier' and input_audio:
-        waveform, sample_rate = torchaudio.load(input_audio)
-        processor = model["processor"]
-        audio_model = model["model"]
-        inputs = processor(waveform, sampling_rate=sample_rate, return_tensors="pt")
-        with torch.no_grad():
-            logits = audio_model(**inputs).logits
-        predicted_class_id = torch.argmax(logits, dim=-1).item()
-        label = audio_model.config.id2label[predicted_class_id]
-        return f"Classe prevista: {label}"
-
     elif model_key == 'speech_to_text' and input_audio:
         return model(input_audio)
 
@@ -93,6 +118,9 @@ def use_model(model_key, input_text=None, input_audio=None, input_image=None):
 # Interface Streamlit
 st.title("Aplicação de IA com Modelos da Hugging Face")
 
+# Carregar os modelos
+models = create_models()
+
 # Seleção do modelo
 model_key = st.selectbox(
     "Escolha o modelo",
@@ -102,7 +130,6 @@ model_key = st.selectbox(
         'summarization',
         'chatbot',
         'image_classifier',
-        'audio_classifier',
         'speech_to_text',
         'object_detection',
         'question_answering',
@@ -115,7 +142,7 @@ if model_key in ['sentiment_analysis', 'text_classification', 'summarization', '
     input_text = st.text_area(f"Digite o texto para {model_key.replace('_', ' ')}:")
     if st.button(f"Executar {model_key.replace('_', ' ')}"):
         if input_text:
-            result = use_model(model_key, input_text=input_text)
+            result = use_model(model_key, models, input_text=input_text)
             st.write(result)
         else:
             st.warning("Por favor, insira um texto.")
@@ -124,18 +151,32 @@ elif model_key in ['image_classifier', 'object_detection']:
     input_image = st.file_uploader("Carregue uma imagem", type=["jpg", "jpeg", "png"])
     if st.button(f"Executar {model_key.replace('_', ' ')}"):
         if input_image:
-            result = use_model(model_key, input_image=input_image)
+            result = use_model(model_key, models, input_image=input_image)
             st.image(input_image, caption="Imagem carregada.", use_column_width=True)
             st.write(result)
         else:
             st.warning("Por favor, carregue uma imagem.")
 
-elif model_key in ['audio_classifier', 'speech_to_text']:
+elif model_key in ['speech_to_text']:
     input_audio = st.file_uploader("Carregue um arquivo de áudio", type=["wav", "mp3", "flac"])
     if st.button(f"Executar {model_key.replace('_', ' ')}"):
         if input_audio:
-            result = use_model(model_key, input_audio=input_audio)
+            result = use_model(model_key, models, input_audio=input_audio)
             st.audio(input_audio, format="audio/wav")
             st.write(result)
         else:
             st.warning("Por favor, carregue um arquivo de áudio.")
+
+elif model_key == 'chatbot':
+    input_text = st.text_area("Digite uma mensagem para o chatbot:")
+    if st.button(f"Enviar mensagem"):
+        if input_text:
+            result = use_model(model_key, models, input_text=input_text)
+            st.write(result)
+        else:
+            st.warning("Por favor, insira uma mensagem.")
+
+# Executar WebRTC para capturar vídeo
+if st.button("Iniciar WebRTC"):
+    st.write("Conectando ao WebRTC...")
+    asyncio.run(run_webrtc())  # Inicia a captura WebRTC em paralelo
