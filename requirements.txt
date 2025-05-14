@@ -8,3 +8,5 @@ protobuf
 pyaudio
 streamlit
 Pillow
+streamlit-webrtc
+av
