@@ -1,10 +1,10 @@
 torch
-transformers>=4.26.0
+transformers
 sentencepiece
 torchaudio
 librosa
 soundfile
-protobuf==3.20.*
-pyaudio==0.2.14
+protobuf
+pyaudio
 streamlit
 Pillow
