@@ -1,6 +1,12 @@
 import streamlit as st
-from transformers import pipeline, AutoImageProcessor, AutoModelForImageClassification, Wav2Vec2Processor, Wav2Vec2ForSequenceClassification
+from transformers import (
+    pipeline, 
+    AutoImageProcessor, AutoModelForImageClassification, 
+    Wav2Vec2Processor, Wav2Vec2ForSequenceClassification
+)
 import torch
+import torchaudio
+from PIL import Image
 
 # Definir o dispositivo (GPU ou CPU)
 device = 0 if torch.cuda.is_available() else -1
@@ -16,11 +22,11 @@ models = {
         "model": AutoModelForImageClassification.from_pretrained("google/vit-base-patch16-224-in21k")
     },
     'audio_classifier': {
-        "processor" = AutoProcessor.from_pretrained("facebook/wav2vec2-large-xlsr-53")
-        "model" = AutoModelForPreTraining.from_pretrained("facebook/wav2vec2-large-xlsr-53")
+        "processor": Wav2Vec2Processor.from_pretrained("superb/wav2vec2-base-superb-ks"),
+        "model": Wav2Vec2ForSequenceClassification.from_pretrained("superb/wav2vec2-base-superb-ks")
     },
     'speech_to_text': pipeline("automatic-speech-recognition", model="facebook/wav2vec2-large-xlsr-53", device=device),
-    'object_detection': pipeline("object-detection", model="facebook/detectron2", device=device),
+    'object_detection': pipeline("object-detection", model="facebook/detr-resnet-50", device=device),
     'question_answering': pipeline("question-answering", model="deepset/roberta-base-squad2", device=device),
     'translation': pipeline("translation_en_to_fr", model="t5-small", device=device)
 }
@@ -31,32 +37,60 @@ def use_model(model_key, input_text=None, input_audio=None, input_image=None):
 
     if model_key == 'sentiment_analysis' and input_text:
         return model(input_text)
+
     elif model_key == 'text_classification' and input_text:
         return model(input_text)
+
     elif model_key == 'summarization' and input_text:
         return model(input_text)
+
     elif model_key == 'chatbot' and input_text:
-        return model(input_text)
+        return model(input_text, max_length=100, num_return_sequences=1)[0]['generated_text']
+
     elif model_key == 'image_classifier' and input_image:
-        inputs = image_processor(images=input_image, return_tensors="pt")
-        outputs = image_model(**inputs)
-        return outputs
+        image = Image.open(input_image).convert("RGB")
+        processor = model["processor"]
+        image_model = model["model"]
+        inputs = processor(images=image, return_tensors="pt")
+        with torch.no_grad():
+            outputs = image_model(**inputs)
+        logits = outputs.logits
+        predicted_class_idx = logits.argmax(-1).item()
+        label = image_model.config.id2label[predicted_class_idx]
+        return f"Classe prevista: {label}"
+
     elif model_key == 'audio_classifier' and input_audio:
-        audio_input = audio_processor(input_audio, return_tensors="pt", sampling_rate=16000)
-        outputs = model["model"](**audio_input)
-        return outputs
+        waveform, sample_rate = torchaudio.load(input_audio)
+        processor = model["processor"]
+        audio_model = model["model"]
+        inputs = processor(waveform, sampling_rate=sample_rate, return_tensors="pt")
+        with torch.no_grad():
+            logits = audio_model(**inputs).logits
+        predicted_class_id = torch.argmax(logits, dim=-1).item()
+        label = audio_model.config.id2label[predicted_class_id]
+        return f"Classe prevista: {label}"
+
     elif model_key == 'speech_to_text' and input_audio:
         return model(input_audio)
+
     elif model_key == 'object_detection' and input_image:
-        return model(input_image)
+        image = Image.open(input_image).convert("RGB")
+        return model(image)
+
     elif model_key == 'question_answering' and input_text:
-        return model(input_text)
+        context = st.text_area("Digite o contexto:", height=200)
+        if context:
+            return model(question=input_text, context=context)
+        else:
+            return "Por favor, forneça o contexto para a pergunta."
+
     elif model_key == 'translation' and input_text:
         return model(input_text)
+
     else:
         return "Modelo ou entrada não reconhecida."
 
-# Streamlit Interface
+# Interface Streamlit
 st.title("Aplicação de IA com Modelos da Hugging Face")
 
 # Seleção do modelo
@@ -76,7 +110,7 @@ model_key = st.selectbox(
     ]
 )
 
-# Entrada do usuário
+# Entrada do usuário conforme o tipo de modelo
 if model_key in ['sentiment_analysis', 'text_classification', 'summarization', 'chatbot', 'question_answering', 'translation']:
     input_text = st.text_area(f"Digite o texto para {model_key.replace('_', ' ')}:")
     if st.button(f"Executar {model_key.replace('_', ' ')}"):
@@ -84,16 +118,18 @@ if model_key in ['sentiment_analysis', 'text_classification', 'summarization', '
             result = use_model(model_key, input_text=input_text)
             st.write(result)
         else:
-            st.write("Por favor, insira um texto.")
+            st.warning("Por favor, insira um texto.")
+
 elif model_key in ['image_classifier', 'object_detection']:
-    input_image = st.file_uploader("Carregue uma imagem", type=["jpg", "png", "jpeg"])
+    input_image = st.file_uploader("Carregue uma imagem", type=["jpg", "jpeg", "png"])
     if st.button(f"Executar {model_key.replace('_', ' ')}"):
         if input_image:
             result = use_model(model_key, input_image=input_image)
             st.image(input_image, caption="Imagem carregada.", use_column_width=True)
             st.write(result)
         else:
-            st.write("Por favor, carregue uma imagem.")
+            st.warning("Por favor, carregue uma imagem.")
+
 elif model_key in ['audio_classifier', 'speech_to_text']:
     input_audio = st.file_uploader("Carregue um arquivo de áudio", type=["wav", "mp3", "flac"])
     if st.button(f"Executar {model_key.replace('_', ' ')}"):
@@ -102,4 +138,4 @@ elif model_key in ['audio_classifier', 'speech_to_text']:
             st.audio(input_audio, format="audio/wav")
             st.write(result)
         else:
-            st.write("Por favor, carregue um arquivo de áudio.")
+            st.warning("Por favor, carregue um arquivo de áudio.")
