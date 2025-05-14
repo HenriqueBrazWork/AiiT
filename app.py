@@ -21,11 +21,10 @@ models = {
         "processor": AutoImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k"),
         "model": AutoModelForImageClassification.from_pretrained("google/vit-base-patch16-224-in21k")
     },
- """   'audio_classifier': {
+    'audio_classifier': {
         "processor": Wav2Vec2Processor.from_pretrained("superb/wav2vec2-base-superb-ks"),
         "model": Wav2Vec2ForSequenceClassification.from_pretrained("superb/wav2vec2-base-superb-ks")
     },
- """   
     'speech_to_text': pipeline("automatic-speech-recognition", model="facebook/wav2vec2-large-xlsr-53", device=device),
     'object_detection': pipeline("object-detection", model="facebook/detr-resnet-50", device=device),
     'question_answering': pipeline("question-answering", model="deepset/roberta-base-squad2", device=device),
