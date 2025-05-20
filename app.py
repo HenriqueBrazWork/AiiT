@@ -4,7 +4,7 @@ from aiortc import VideoStreamTrack, RTCPeerConnection, RTCSessionDescription
 from aiortc.contrib.media import MediaPlayer
 import streamlit as st
 from transformers import (
-    pipeline, 
+    pipeline,
     AutoImageProcessor, AutoModelForImageClassification, 
     Wav2Vec2Processor, Wav2Vec2ForSequenceClassification
 )
