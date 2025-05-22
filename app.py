@@ -28,7 +28,7 @@ def create_models():
             "processor": AutoImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k"),
             "model": AutoModelForImageClassification.from_pretrained("google/vit-base-patch16-224-in21k")
         },
-        'speech_to_text': pipeline("automatic-speech-recognition", model="facebook/wav2vec2-large-xlsr-53", device=device),
+       # 'speech_to_text': pipeline("automatic-speech-recognition", model="facebook/wav2vec2-large-xlsr-53", device=device),
         'object_detection': pipeline("object-detection", model="facebook/detr-resnet-50", device=device),
         'question_answering': pipeline("question-answering", model="deepset/roberta-base-squad2", device=device),
         'translation': pipeline("translation_en_to_fr", model="t5-small", device=device)
