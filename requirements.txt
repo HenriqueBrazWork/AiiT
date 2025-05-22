@@ -1,7 +1,8 @@
+torchvision
+pillow
 aiortc
 opencv-python
 transformers
 torch
 streamlit
-Pillow
 torchaudio
