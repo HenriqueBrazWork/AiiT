@@ -15,22 +15,22 @@ st.markdown("""<style>.main-header {background: linear-gradient(90deg, #1e3c72 0
 # Modelos leves para demo rápida
 @st.cache_resource
 def load_lite_models():
-"""Carrega modelos menores para demonstração rápida"""
-try:
-    models = {}
-
-# Apenas modelos pequenos e rápidos
-with st.spinner("Carregando modelo de sentimentos..."):
-    models['sentiment'] = pipeline("sentiment-analysis", 
-    model="cardiffnlp/twitter-roberta-base-sentiment-latest")
-
-with st.spinner("Carregando modelo de resumo..."):
-    models['summarization'] = pipeline("summarization", 
-    model="sshleifer/distilbart-cnn-6-6")
-return models
-except Exception as e:
-    st.error(f"Erro ao carregar modelos: {e}")
-return {}
+    """Carrega modelos menores para demonstração rápida"""
+    try:
+        models = {}
+    
+    # Apenas modelos pequenos e rápidos
+    with st.spinner("Carregando modelo de sentimentos..."):
+        models['sentiment'] = pipeline("sentiment-analysis", 
+        model="cardiffnlp/twitter-roberta-base-sentiment-latest")
+    
+    with st.spinner("Carregando modelo de resumo..."):
+        models['summarization'] = pipeline("summarization", 
+        model="sshleifer/distilbart-cnn-6-6")
+    return models
+    except Exception as e:
+        st.error(f"Erro ao carregar modelos: {e}")
+    return {}
 
 def analyze_sentiment(text, model):
 """Análise de sentimento otimizada"""
@@ -74,7 +74,7 @@ def summarize_text(text, model):
     'summary_words': len(result['summary_text'].split()),
     'processing_time': processing_time,
     'status': 'success'
-    }
+}
     except Exception as e:
         return {'status': 'error', 'error': str(e)}
 
