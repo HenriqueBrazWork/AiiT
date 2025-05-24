@@ -20,11 +20,9 @@ def load_lite_models():
         models = {}
     # Apenas modelos pequenos e rápidos
     with st.spinner("Carregando modelo de sentimentos..."):
-        models['sentiment'] = pipeline("sentiment-analysis", 
-        model="cardiffnlp/twitter-roberta-base-sentiment-latest")
+        models['sentiment'] = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment-latest")
     with st.spinner("Carregando modelo de resumo..."):
-        models['summarization'] = pipeline("summarization", 
-        model="sshleifer/distilbart-cnn-6-6")
+        models['summarization'] = pipeline("summarization", model="sshleifer/distilbart-cnn-6-6")
     return models
     except Exception as e:
         st.error(f"Erro ao carregar modelos: {e}")
