@@ -4,128 +4,540 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AiiT - Soluções Tecnológicas Inovadoras</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Ubuntu:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        dark: '#1F2937',
+                        light: '#F9FAFB',
+                    },
+                    fontFamily: {
+                        sans: ['Roboto', 'sans-serif'],
+                        display: ['Ubuntu', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-text {
+            background: linear-gradient(90deg, #3B82F6, #10B981);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #3B82F6;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
 </head>
-<body>
-    <!-- Header / Menu de Navegação -->
-    <header id="header">
-        <div class="container">
-            <h1>AiiT</h1>
-            <nav>
-                <ul>
-                    <li><a href="#inicio">Início</a></li>
-                    <li><a href="#sobre">Sobre</a></li>
-                    <li><a href="#servicos">Serviços</a></li>
-                    <li><a href="#contato">Contato</a></li>
-                </ul>
+<body class="font-sans bg-gray-50 text-gray-800">
+    <!-- Header -->
+    <header class="fixed w-full bg-white shadow-sm z-50 transition-all duration-300">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold gradient-text">AiiT</a>
+            
+            <nav class="hidden md:flex space-x-8">
+                <a href="#inicio" class="nav-link font-medium text-gray-700 hover:text-primary transition">Início</a>
+                <a href="#sobre" class="nav-link font-medium text-gray-700 hover:text-primary transition">Sobre</a>
+                <a href="#servicos" class="nav-link font-medium text-gray-700 hover:text-primary transition">Serviços</a>
+                <a href="#contato" class="nav-link font-medium text-gray-700 hover:text-primary transition">Contato</a>
             </nav>
-            <a href="#servicos" class="cta-button">Conheça nossos Serviços</a>
+            
+            <a href="#servicos" class="hidden md:block bg-primary hover:bg-blue-600 text-white px-6 py-2 rounded-full font-medium transition shadow-md hover:shadow-lg">
+                Conheça nossos Serviços
+            </a>
+            
+            <button id="menu-toggle" class="md:hidden text-gray-700 focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-4 px-6 shadow-lg">
+            <div class="flex flex-col space-y-4">
+                <a href="#inicio" class="font-medium text-gray-700 hover:text-primary transition">Início</a>
+                <a href="#sobre" class="font-medium text-gray-700 hover:text-primary transition">Sobre</a>
+                <a href="#servicos" class="font-medium text-gray-700 hover:text-primary transition">Serviços</a>
+                <a href="#contato" class="font-medium text-gray-700 hover:text-primary transition">Contato</a>
+                <a href="#servicos" class="bg-primary hover:bg-blue-600 text-white px-6 py-2 rounded-full font-medium transition text-center">
+                    Conheça nossos Serviços
+                </a>
+            </div>
         </div>
     </header>
 
-    <!-- Página Inicial -->
-    <section id="inicio" class="hero">
-        <div class="hero-content">
-            <h2>Soluções inovadoras para transformar desafios em oportunidades</h2>
-            <img src="/path/to/AiiT-image.png" alt="AiiT - Soluções Tecnológicas" class="hero-img">
-            <a href="#servicos" class="cta-button">Saiba Mais</a>
-        </div>
-    </section>
-
-    <!-- Sobre Nós -->
-    <section id="sobre">
-        <div class="container">
-            <h2>Sobre a AiiT</h2>
-            <p>AiiT é uma empresa dedicada a criar soluções inovadoras para os problemas dos nossos clientes, utilizando as tecnologias mais avançadas, como Inteligência Artificial, Machine Learning e Robótica.</p>
-            <img src="sua-imagem-aqui.jpg" alt="Imagem ilustrativa sobre a AiiT" class="sobre-img">
-        </div>
-    </section>
-
-    <!-- Serviços -->
-    <section id="servicos">
-        <div class="container">
-            <h2>Serviços</h2>
-            <p>Descubra como nossas soluções de Inteligência Artificial e Robótica podem transformar o seu negócio:</p>
-            <div class="servicos-lista">
-                <div class="servico-item">
-                    <h3>Consultoria em IA e Robótica</h3>
-                    <p>Oferecemos consultoria especializada para implementar soluções de IA e automação em sua empresa.</p>
-                </div>
-                <div class="servico-item">
-                    <h3>Desenvolvimento de Sistemas Inteligentes</h3>
-                    <p>Desenvolvemos softwares inteligentes utilizando IA, Machine Learning e Deep Learning para otimizar processos empresariais.</p>
-                </div>
-                <div class="servico-item">
-                    <h3>Automação de Processos com RPA</h3>
-                    <p>Automatizamos tarefas repetitivas e baseadas em regras, melhorando a eficiência e reduzindo custos operacionais.</p>
-                </div>
-                <div class="servico-item">
-                    <h3>Desenvolvimento de Robôs Industriais</h3>
-                    <p>Criamos soluções robóticas para automação industrial, desde robôs colaborativos (cobots) até veículos autônomos.</p>
-                </div>
-                <div class="servico-item">
-                    <h3>Implementação de Sistemas de Visão Computacional</h3>
-                    <p>Desenvolvemos sistemas de IA para análise e reconhecimento de imagens e vídeos, com aplicação em segurança, saúde e mais.</p>
-                </div>
-                <div class="servico-item">
-                    <h3>Soluções para Internet das Coisas (IoT)</h3>
-                    <p>Integramos IA com dispositivos IoT para melhorar o monitoramento e automação de processos em tempo real.</p>
-                </div>
-                <div class="servico-item">
-                    <h3>Análise de Dados com IA</h3>
-                    <p>Utilizamos IA para realizar análises avançadas de dados, fornecendo insights valiosos para a tomada de decisões empresariais.</p>
-                </div>
-                <div class="servico-item">
-                    <h3>Desenvolvimento de Chatbots e Assistentes Virtuais</h3>
-                    <p>Desenvolvemos chatbots e assistentes virtuais que utilizam IA para automatizar atendimento ao cliente e processos internos.</p>
-                   <a href="https://dhryh3aww7wwjgs8poyf74.streamlit.app/" target="_blank">
-                    <button class="chatbot-button">💬 Testar Chatbot com IA</button>
+    <!-- Hero Section -->
+    <section id="inicio" class="pt-32 pb-20 md:pt-40 md:pb-28 bg-gradient-to-r from-blue-50 to-green-50">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-12 md:mb-0">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                    <span class="gradient-text">Soluções inovadoras</span> para transformar desafios em oportunidades
+                </h1>
+                <p class="text-lg md:text-xl text-gray-600 mb-8">
+                    Utilizamos Inteligência Artificial, Machine Learning e Robótica para criar soluções personalizadas que impulsionam seu negócio.
+                </p>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="#servicos" class="bg-primary hover:bg-blue-600 text-white px-8 py-3 rounded-full font-medium transition shadow-md hover:shadow-lg text-center">
+                        Saiba Mais
+                    </a>
+                    <a href="#contato" class="border border-primary text-primary hover:bg-primary hover:text-white px-8 py-3 rounded-full font-medium transition shadow-sm hover:shadow-md text-center">
+                        Fale Conosco
                     </a>
                 </div>
-                <div class="servico-item">
-                    <h3>Integração de Sistemas de IA com Infraestrutura Existente</h3>
-                    <p>Integrar sistemas de IA avançados à sua infraestrutura existente, garantindo uma transição suave e melhorias contínuas.</p>
+            </div>
+            <div class="md:w-1/2">
+                <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" 
+                     alt="Tecnologia e Inovação" 
+                     class="rounded-xl shadow-2xl w-full h-auto object-cover">
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="sobre" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="text-sm font-semibold text-primary bg-blue-50 px-4 py-1 rounded-full">SOBRE NÓS</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-4 mb-4">Sobre a <span class="gradient-text">AiiT</span></h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto"></div>
+            </div>
+            
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-12 md:mb-0 md:pr-10">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" 
+                         alt="Equipe AiiT" 
+                         class="rounded-xl shadow-lg w-full h-auto object-cover">
+                </div>
+                <div class="md:w-1/2">
+                    <p class="text-lg text-gray-600 mb-6">
+                        A AiiT é uma empresa de tecnologia dedicada a criar soluções inovadoras para os desafios mais complexos dos nossos clientes. Combinamos expertise técnica com criatividade para desenvolver produtos que realmente fazem a diferença.
+                    </p>
+                    <p class="text-lg text-gray-600 mb-6">
+                        Nossa equipe multidisciplinar trabalha com as tecnologias mais avançadas, incluindo Inteligência Artificial, Machine Learning, Robótica e Internet das Coisas, para oferecer soluções personalizadas que impulsionam resultados.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4 mt-8">
+                        <div class="flex items-center">
+                            <div class="bg-blue-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-brain text-primary text-xl"></i>
+                            </div>
+                            <span class="font-medium">IA Avançada</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="bg-green-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-robot text-secondary text-xl"></i>
+                            </div>
+                            <span class="font-medium">Robótica</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="bg-purple-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-network-wired text-purple-500 text-xl"></i>
+                            </div>
+                            <span class="font-medium">IoT</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="bg-yellow-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-chart-line text-yellow-500 text-xl"></i>
+                            </div>
+                            <span class="font-medium">Análise de Dados</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Contato -->
-    <section id="contato">
-        <div class="container">
-            <h2>Contato</h2>
-            <form action="#" method="post" class="form-contato">
-                <label for="nome">Nome:</label>
-                <input type="text" id="nome" name="nome" required>
-
-                <label for="email">E-mail:</label>
-                <input type="email" id="email" name="email" required>
-
-                <label for="mensagem">Mensagem:</label>
-                <textarea id="mensagem" name="mensagem" required></textarea>
-
-                <button type="submit" class="btn-enviar">Enviar</button>
-            </form>
-            <div class="contato-info">
-                <p>Email: <a href="mailto:henriquebrazwork@hotmail.com">henriquebrazwork@hotmail.com</a></p>
-                <p>Telefone: <a href="tel:+351 924117781">(+351) 924117781</a></p>
+    <!-- Services Section -->
+    <section id="servicos" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="text-sm font-semibold text-primary bg-blue-50 px-4 py-1 rounded-full">NOSSOS SERVIÇOS</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-4 mb-4">Como podemos <span class="gradient-text">ajudar você</span></h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Descubra como nossas soluções de Inteligência Artificial e Robótica podem transformar o seu negócio
+                </p>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
+                    <div class="p-6">
+                        <div class="bg-blue-100 w-14 h-14 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-robot text-primary text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Consultoria em IA e Robótica</h3>
+                        <p class="text-gray-600">
+                            Oferecemos consultoria especializada para implementar soluções de IA e automação em sua empresa.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Service 2 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
+                    <div class="p-6">
+                        <div class="bg-green-100 w-14 h-14 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-code text-secondary text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Desenvolvimento de Sistemas Inteligentes</h3>
+                        <p class="text-gray-600">
+                            Desenvolvemos softwares inteligentes utilizando IA, Machine Learning e Deep Learning para otimizar processos empresariais.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Service 3 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
+                    <div class="p-6">
+                        <div class="bg-purple-100 w-14 h-14 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-cogs text-purple-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Automação de Processos com RPA</h3>
+                        <p class="text-gray-600">
+                            Automatizamos tarefas repetitivas e baseadas em regras, melhorando a eficiência e reduzindo custos operacionais.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Service 4 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
+                    <div class="p-6">
+                        <div class="bg-yellow-100 w-14 h-14 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-industry text-yellow-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Desenvolvimento de Robôs Industriais</h3>
+                        <p class="text-gray-600">
+                            Criamos soluções robóticas para automação industrial, desde robôs colaborativos (cobots) até veículos autônomos.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Service 5 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
+                    <div class="p-6">
+                        <div class="bg-red-100 w-14 h-14 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-eye text-red-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Sistemas de Visão Computacional</h3>
+                        <p class="text-gray-600">
+                            Desenvolvemos sistemas de IA para análise e reconhecimento de imagens e vídeos, com aplicação em segurança, saúde e mais.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Service 6 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
+                    <div class="p-6">
+                        <div class="bg-blue-100 w-14 h-14 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-wifi text-blue-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Soluções para Internet das Coisas (IoT)</h3>
+                        <p class="text-gray-600">
+                            Integramos IA com dispositivos IoT para melhorar o monitoramento e automação de processos em tempo real.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Service 7 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
+                    <div class="p-6">
+                        <div class="bg-green-100 w-14 h-14 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-database text-secondary text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Análise de Dados com IA</h3>
+                        <p class="text-gray-600">
+                            Utilizamos IA para realizar análises avançadas de dados, fornecendo insights valiosos para a tomada de decisões empresariais.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Service 8 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
+                    <div class="p-6">
+                        <div class="bg-purple-100 w-14 h-14 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-comments text-purple-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Chatbots e Assistentes Virtuais</h3>
+                        <p class="text-gray-600">
+                            Desenvolvemos chatbots e assistentes virtuais que utilizam IA para automatizar atendimento ao cliente e processos internos.
+                        </p>
+                        <a href="https://dhryh3aww7wwjgs8poyf74.streamlit.app/" target="_blank" class="mt-4 inline-block bg-primary hover:bg-blue-600 text-white px-6 py-2 rounded-full font-medium transition shadow-md hover:shadow-lg">
+                            <i class="fas fa-comment-dots mr-2"></i> Testar Chatbot com IA
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Service 9 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
+                    <div class="p-6">
+                        <div class="bg-yellow-100 w-14 h-14 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-plug text-yellow-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Integração de Sistemas de IA</h3>
+                        <p class="text-gray-600">
+                            Integrar sistemas de IA avançados à sua infraestrutura existente, garantindo uma transição suave e melhorias contínuas.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Rodapé -->
-    <footer>
-        <div class="container">
-            <p>© 2024 AiiT - Todos os direitos reservados.</p>
-            <div class="social-icons">
-                <a href="#" class="social-icon">FB</a>
-                <a href="#" class="social-icon">X</a>
-                <a href="#" class="social-icon">LI</a>
+    <!-- Contact Section -->
+    <section id="contato" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="text-sm font-semibold text-primary bg-blue-50 px-4 py-1 rounded-full">CONTATO</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-4 mb-4">Fale <span class="gradient-text">conosco</span></h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Entre em contato para saber como podemos ajudar seu negócio a alcançar novos patamares com tecnologia.
+                </p>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto"></div>
+            </div>
+            
+            <div class="flex flex-col lg:flex-row gap-12">
+                <div class="lg:w-1/2">
+                    <form class="space-y-6">
+                        <div>
+                            <label for="nome" class="block text-gray-700 font-medium mb-2">Nome</label>
+                            <input type="text" id="nome" name="nome" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition" required>
+                        </div>
+                        
+                        <div>
+                            <label for="email" class="block text-gray-700 font-medium mb-2">E-mail</label>
+                            <input type="email" id="email" name="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition" required>
+                        </div>
+                        
+                        <div>
+                            <label for="mensagem" class="block text-gray-700 font-medium mb-2">Mensagem</label>
+                            <textarea id="mensagem" name="mensagem" rows="5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-primary hover:bg-blue-600 text-white px-6 py-3 rounded-full font-medium transition shadow-md hover:shadow-lg">
+                            Enviar Mensagem
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="lg:w-1/2">
+                    <div class="bg-gray-50 p-8 rounded-xl h-full">
+                        <h3 class="text-xl font-bold mb-6">Informações de Contato</h3>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <div class="bg-blue-100 p-3 rounded-full mr-4">
+                                    <i class="fas fa-envelope text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-700">Email</h4>
+                                    <a href="mailto:henriquebrazwork@hotmail.com" class="text-gray-600 hover:text-primary transition">henriquebrazwork@hotmail.com</a>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="bg-green-100 p-3 rounded-full mr-4">
+                                    <i class="fas fa-phone text-secondary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-700">Telefone</h4>
+                                    <a href="tel:+351924117781" class="text-gray-600 hover:text-primary transition">(+351) 924 117 781</a>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="bg-purple-100 p-3 rounded-full mr-4">
+                                    <i class="fas fa-map-marker-alt text-purple-500"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-700">Localização</h4>
+                                    <p class="text-gray-600">Portugal</p>
+                                </div>
+                            </div>
+                            
+                            <div class="pt-4">
+                                <h4 class="font-medium text-gray-700 mb-4">Redes Sociais</h4>
+                                <div class="flex space-x-4">
+                                    <a href="#" class="bg-blue-100 hover:bg-blue-200 w-10 h-10 rounded-full flex items-center justify-center text-blue-500 transition">
+                                        <i class="fab fa-facebook-f"></i>
+                                    </a>
+                                    <a href="#" class="bg-blue-400 hover:bg-blue-500 w-10 h-10 rounded-full flex items-center justify-center text-white transition">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="#" class="bg-blue-600 hover:bg-blue-700 w-10 h-10 rounded-full flex items-center justify-center text-white transition">
+                                        <i class="fab fa-linkedin-in"></i>
+                                    </a>
+                                    <a href="#" class="bg-pink-500 hover:bg-pink-600 w-10 h-10 rounded-full flex items-center justify-center text-white transition">
+                                        <i class="fab fa-instagram"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-12">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <a href="#" class="text-2xl font-bold gradient-text">AiiT</a>
+                    <p class="mt-2 text-gray-400">Soluções Tecnológicas Inovadoras</p>
+                </div>
+                
+                <div class="flex flex-col md:flex-row md:space-x-10 space-y-4 md:space-y-0">
+                    <div>
+                        <h4 class="text-white font-medium mb-4">Links Rápidos</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#inicio" class="hover:text-white transition">Início</a></li>
+                            <li><a href="#sobre" class="hover:text-white transition">Sobre</a></li>
+                            <li><a href="#servicos" class="hover:text-white transition">Serviços</a></li>
+                            <li><a href="#contato" class="hover:text-white transition">Contato</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-white font-medium mb-4">Serviços</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="hover:text-white transition">IA e Robótica</a></li>
+                            <li><a href="#" class="hover:text-white transition">Automação</a></li>
+                            <li><a href="#" class="hover:text-white transition">Visão Computacional</a></li>
+                            <li><a href="#" class="hover:text-white transition">Chatbots</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-white font-medium mb-4">Contato</h4>
+                        <ul class="space-y-2">
+                            <li class="flex items-center">
+                                <i class="fas fa-envelope mr-2 text-primary"></i>
+                                <a href="mailto:henriquebrazwork@hotmail.com" class="hover:text-white transition">henriquebrazwork@hotmail.com</a>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-phone mr-2 text-secondary"></i>
+                                <a href="tel:+351924117781" class="hover:text-white transition">(+351) 924 117 781</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm mb-4 md:mb-0">© 2024 AiiT - Todos os direitos reservados.</p>
+                
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </footer>
 
-    <script src="scripts.js"></script>
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-primary text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // Mobile Menu Toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Smooth Scrolling for Anchor Links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+        
+        // Back to Top Button
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+                backToTopButton.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopButton.classList.remove('opacity-100', 'visible');
+                backToTopButton.classList.add('opacity-0', 'invisible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Header Scroll Effect
+        const header = document.querySelector('header');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 50) {
+                header.classList.add('shadow-md');
+                header.classList.add('py-3');
+                header.classList.remove('py-4');
+            } else {
+                header.classList.remove('shadow-md');
+                header.classList.remove('py-3');
+                header.classList.add('py-4');
+            }
+        });
+    </script>
 </body>
 </html>
