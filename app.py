@@ -1,302 +1,157 @@
 import streamlit as st
-import time
-from transformers import pipeline
+from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification, AutoModelForSeq2SeqLM, AutoModelForCausalLM
+import torch
 
-# Page configuration
-st.set_page_config(
-    page_title="AiiT - Demo de IA",
-    page_icon="🚀",
-    layout="wide"
-)
-
-# Custom CSS
+st.set_page_config(page_title="AiiT - IA Multifunções", layout="wide")
 st.markdown("""
-<style>
-.main-header {
-    background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
-    padding: 2rem;
-    border-radius: 10px;
-    color: white;
-    text-align: center;
-    margin-bottom: 2rem;
-}
-.demo-card {
-    background: #f8f9fa;
-    padding: 1.5rem;
-    border-radius: 10px;
-    border-left: 4px solid #2a5298;
-    margin: 1rem 0;
-}
-</style>
+    <style>
+        body {
+            background-color: #f9f9f9;
+            color: #333333;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .main {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #004d99;
+        }
+        .stTextInput>div>div>input {
+            padding: 10px;
+            font-size: 16px;
+        }
+        .stButton>button {
+            background-color: #004d99;
+            color: white;
+            border-radius: 0.5rem;
+            padding: 10px 20px;
+        }
+        .demo-card {
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+    </style>
 """, unsafe_allow_html=True)
 
-# Cached model loader
+st.title("🤖 AiiT - Aplicação de IA Multifunções")
+
+models = {}
+
 @st.cache_resource
 def load_lite_models():
-    """Load lightweight models for quick demo"""
-    models = {}
-    
-    with st.spinner("Carregando modelo de sentimentos..."):
-        try:
-            models['sentiment'] = pipeline(
-                "sentiment-analysis", 
-                model="cardiffnlp/twitter-roberta-base-sentiment-latest"
-            )
-        except Exception as e:
-            st.error(f"Erro no modelo de sentimentos: {e}")
-    
-    with st.spinner("Carregando modelo de resumo..."):
-        try:
-            models['summarization'] = pipeline(
-                "summarization", 
-                model="sshleifer/distilbart-cnn-6-6"
-            )
-        except Exception as e:
-            st.error(f"Erro no modelo de sumarização: {e}")
-    
-    return models
-
-# Sentiment analysis function
-def analyze_sentiment(text, model):
-    start_time = time.time()
-    try:
-        result = model(text[:512])[0]  # Truncate to 512 tokens for safety
-        processing_time = round(time.time() - start_time, 2)
-        
-        sentiment_map = {
-            'LABEL_0': {'name': 'Negativo', 'emoji': '😞', 'color': 'red'},
-            'LABEL_1': {'name': 'Neutro', 'emoji': '😐', 'color': 'orange'},
-            'LABEL_2': {'name': 'Positivo', 'emoji': '😊', 'color': 'green'},
-            'NEGATIVE': {'name': 'Negativo', 'emoji': '😞', 'color': 'red'},
-            'POSITIVE': {'name': 'Positivo', 'emoji': '😊', 'color': 'green'}
+    sentiment_pipeline = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
+    summarization_tokenizer = AutoTokenizer.from_pretrained("t5-small")
+    summarization_model = AutoModelForSeq2SeqLM.from_pretrained("t5-small")
+    qwen_tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen1.5-0.5B-Chat", trust_remote_code=True)
+    qwen_model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen1.5-0.5B-Chat", trust_remote_code=True)
+    return {
+        "sentiment": sentiment_pipeline,
+        "summarization": {
+            "tokenizer": summarization_tokenizer,
+            "model": summarization_model
+        },
+        "qwen": {
+            "tokenizer": qwen_tokenizer,
+            "model": qwen_model
         }
-        
-        sentiment_info = sentiment_map.get(
-            result['label'], 
-            {'name': result['label'], 'emoji': '🤔', 'color': 'blue'}
-        )
-        
-        return {
-            'sentiment': sentiment_info['name'],
-            'emoji': sentiment_info['emoji'],
-            'confidence': round(result['score'] * 100, 1),
-            'processing_time': processing_time,
-            'status': 'success'
-        }
-    except Exception as e:
-        return {'status': 'error', 'error': str(e)}
+    }
 
-# Text summarization function
-def summarize_text(text, model):
-    start_time = time.time()
-    try:
-        if len(text.split()) < 20:
-            return {
-                'status': 'error', 
-                'error': 'Texto precisa ter pelo menos 20 palavras'
-            }
+with st.spinner("🔄 A carregar modelos..."):
+    models = load_lite_models()
 
-        # Truncate to model limits
-        truncated_text = text[:1024]
-        result = model(
-            truncated_text, 
-            max_length=100, 
-            min_length=20, 
-            do_sample=False
-        )[0]
-        
-        processing_time = round(time.time() - start_time, 2)
-        return {
-            'summary': result['summary_text'],
-            'original_words': len(truncated_text.split()),
-            'summary_words': len(result['summary_text'].split()),
-            'processing_time': processing_time,
-            'status': 'success'
-        }
-    except Exception as e:
-        return {'status': 'error', 'error': str(e)}
+tab1, tab2, tab3 = st.tabs(["😊 Análise de Sentimentos", "📄 Resumo de Texto", "🤖 Chat IA (Qwen)"])
 
-# Main app function
-def main():
-    # Initialize session state
-    if 'sentiment_text' not in st.session_state:
-        st.session_state.sentiment_text = ""
-    
-    if 'summary_text' not in st.session_state:
-        st.session_state.summary_text = ""
-    
-    # Header
-    st.markdown("""
-    <div class="main-header">
-        <h1>🚀 AiiT - Soluções Tecnológicas Inovadoras</h1>
-        <h3>Demonstração de Inteligência Artificial</h3>
-        <p>Versão Lite - Modelos Otimizados</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Sidebar
-    with st.sidebar:
-        st.markdown("### 🏢 AiiT")
-        st.info("""
-        **Transformando negócios com IA**
-        
-        • Análise de Sentimentos  
-        • Processamento de Texto  
-        • Automação Inteligente  
-        • Consultoria Especializada
-        """)
-        
-        st.markdown("---")
-        st.markdown("### 📞 Contacto")
-        st.markdown("📧 henriquebrazwork@hotmail.com")
-        st.markdown("📱 +351 xxx xxx xxx")
-        
-        # Load models
-        st.markdown("---")
-        st.write("### ⚡ Inicialização de IA...")
-        models = load_lite_models()
-        
-        if 'sentiment' in models and 'summarization' in models:
-            st.success("✅ Modelos carregados! Pronto para usar")
+# --- TAB 1: Análise de Sentimentos ---
+with tab1:
+    st.markdown('<div class="demo-card">', unsafe_allow_html=True)
+    st.subheader("😊 Análise de Sentimentos")
+    st.write("Introduz um texto para obter a análise de sentimento.")
+
+    user_input_sentiment = st.text_area("Texto:", height=150, key="sentiment_input")
+
+    if st.button("🔍 Analisar Sentimento", key="sentiment_button"):
+        if user_input_sentiment and 'sentiment' in models:
+            result = models["sentiment"](user_input_sentiment)
+            st.write("**Resultado:**")
+            st.json(result)
         else:
-            st.error("❌ Alguns modelos falharam ao carregar")
+            st.warning("⚠️ Introduz um texto para análise.")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    # Tabs
-    tab1, tab2 = st.tabs(["😊 Análise de Sentimentos", "📄 Resumo de Texto"])
-    
-    with tab1:
-        st.markdown('<div class="demo-card">', unsafe_allow_html=True)
-        st.subheader("🎯 Análise de Sentimentos")
-        st.write("Descubra se um texto expressa sentimento positivo, negativo ou neutro")
-        
-        # Quick examples
-        examples = [
-            "Adorei este produto! Superou todas as minhas expectativas!",
-            "O atendimento foi péssimo, não recomendo para ninguém.",
-            "O produto é ok, nada excepcional mas funciona bem."
-        ]
-        
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            if st.button("😊 Exemplo Positivo"):
-                st.session_state.sentiment_text = examples[0]
-        with col2:
-            if st.button("😞 Exemplo Negativo"):
-                st.session_state.sentiment_text = examples[1]
-        with col3:
-            if st.button("😐 Exemplo Neutro"):
-                st.session_state.sentiment_text = examples[2]
-        
-        # Text input
-        sentiment_text = st.text_area(
-            "Digite o texto para análise:",
-            value=st.session_state.sentiment_text,
-            height=100,
-            placeholder="Ex: Reviews, comentários, feedbacks..."
-        )
-        
-        if st.button("🚀 Analisar Sentimento", type="primary"):
-            if sentiment_text and sentiment_text.strip():
-                with st.spinner("Analisando..."):
-                    if 'sentiment' in models:
-                        result = analyze_sentiment(sentiment_text, models['sentiment'])
-                        if result['status'] == 'success':
-                            col1, col2, col3 = st.columns(3)
-                            with col1:
-                                st.metric("Sentimento", f"{result['emoji']} {result['sentiment']}")
-                            with col2:
-                                st.metric("Confiança", f"{result['confidence']}%")
-                            with col3:
-                                st.metric("Tempo", f"{result['processing_time']}s")
-                            
-                            # Recommendation
-                            if result['confidence'] > 80:
-                                if result['sentiment'] == 'Positivo':
-                                    st.success("💡 Ótimo feedback! Use em marketing e testimonials.")
-                                elif result['sentiment'] == 'Negativo':
-                                    st.warning("⚠️ Feedback negativo. Considere ação corretiva.")
-                                elif result['sentiment'] == 'Neutro':
-                                    st.info("📊 Feedback neutro. Oportunidade de engajamento.")
-                            else:
-                                st.info("🔍 Resultado inconclusivo. Análise manual recomendada.")
-                        else:
-                            st.error(f"❌ Erro: {result['error']}")
-                    else:
-                        st.error("Modelo de análise não carregado")
-            else:
-                st.warning("⚠️ Digite um texto para análise")
-                
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    with tab2:
-        st.markdown('<div class="demo-card">', unsafe_allow_html=True)
-        st.subheader("📄 Resumo Automático")
-        st.write("Gere resumos concisos de textos longos automaticamente")
-        
-        # Quick example text
-        sample_text = """
-        A inteligência artificial (IA) está revolucionando diversos setores da economia mundial. 
-        Empresas de todos os tamanhos estão implementando soluções de IA para automatizar processos, 
-        melhorar a eficiência operacional e oferecer experiências mais personalizadas aos clientes.
-        No setor de saúde, a IA está sendo usada para diagnósticos mais precisos e desenvolvimento
-        de novos medicamentos. Na educação, sistemas inteligentes personalizam o aprendizado para
-        cada aluno. O varejo utiliza IA para recomendações de produtos e otimização de estoque.
-        Apesar dos benefícios, é importante considerar questões éticas e de privacidade no
-        desenvolvimento e implementação dessas tecnologias.
-        """
-        
-        if st.button("📝 Carregar Texto de Exemplo", key="sample_btn"):
-            st.session_state.summary_text = sample_text
-        
-        # Text input
-        summary_text = st.text_area(
-            "Cole o texto que deseja resumir:",
-            value=st.session_state.summary_text,
-            height=200,
-            placeholder="Cole aqui artigos, relatórios, documentos...",
-            key="summary_area"
-        )
-        
-        if st.button("📄 Gerar Resumo", type="primary", key="summarize_btn"):
-            if summary_text and summary_text.strip():
-                with st.spinner("Gerando resumo..."):
-                    if 'summarization' in models:
-                        result = summarize_text(summary_text, models['summarization'])
-                        if result['status'] == 'success':
-                            col1, col2, col3 = st.columns(3)
-                            with col1:
-                                st.metric("Palavras Originais", result['original_words'])
-                            with col2:
-                                st.metric("Palavras Resumo", result['summary_words'])
-                            with col3:
-                                st.metric("Tempo", f"{result['processing_time']}s")
-                            
-                            st.markdown("**📋 Resumo Gerado:**")
-                            st.info(result['summary'])
-                            
-                            compression = round(
-                                (1 - result['summary_words']/result['original_words']) * 100, 
-                                1
-                            )
-                            st.success(f"✨ Texto comprimido em {compression}%!")
-                        else:
-                            st.error(f"❌ Erro: {result['error']}")
-                    else:
-                        st.error("Modelo de sumarização não carregado")
-            else:
-                st.warning("⚠️ Cole um texto para resumir")
-                
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Footer
-    st.markdown("---")
-    st.markdown("""
-    <div style="text-align: center; padding: 2rem; background: #f1f3f4; border-radius: 10px;">
-        <h4>🚀 AiiT - Transformando Negócios com IA</h4>
-        <p>Esta é uma demonstração das capacidades de IA que podemos implementar em seu negócio.</p>
-        <p><strong>Interessado em uma solução personalizada? Entre em contacto!</strong></p>
-    </div>
-    """, unsafe_allow_html=True)
+# --- TAB 2: Resumo de Texto ---
+with tab2:
+    st.markdown('<div class="demo-card">', unsafe_allow_html=True)
+    st.subheader("📄 Resumo de Texto")
+    st.write("Insere um texto longo para gerar um resumo.")
 
-if __name__ == "__main__":
-    main()
+    user_input_summary = st.text_area("Texto para resumir:", height=200, key="summary_input")
+
+    if st.button("📄 Resumir", key="summary_button"):
+        if user_input_summary and 'summarization' in models:
+            tokenizer = models["summarization"]["tokenizer"]
+            model = models["summarization"]["model"]
+
+            inputs = tokenizer("summarize: " + user_input_summary, return_tensors="pt", max_length=512, truncation=True)
+            summary_ids = model.generate(inputs["input_ids"], max_length=150, min_length=30, length_penalty=2.0, num_beams=4, early_stopping=True)
+            summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+
+            st.write("**Resumo:**")
+            st.success(summary)
+        else:
+            st.warning("⚠️ Introduz um texto válido.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# --- TAB 3: Chat IA com Qwen ---
+with tab3:
+    st.markdown('<div class="demo-card">', unsafe_allow_html=True)
+    st.subheader("🤖 Chat com IA - Modelo Qwen")
+    st.write("Converse com uma IA baseada no modelo Qwen")
+
+    if 'chat_history' not in st.session_state:
+        st.session_state.chat_history = []
+
+    user_input_qwen = st.text_area("Digite sua mensagem:", height=100, key="qwen_input")
+
+    if st.button("💬 Enviar", key="qwen_send_btn"):
+        if user_input_qwen and 'qwen' in models:
+            tokenizer = models['qwen']['tokenizer']
+            model = models['qwen']['model']
+
+            try:
+                prompt = ""
+                for msg in st.session_state.chat_history:
+                    prompt += f"Usuário: {msg['user']}\nQwen: {msg['bot']}\n"
+                prompt += f"Usuário: {user_input_qwen}\nQwen:"
+
+                inputs = tokenizer(prompt, return_tensors="pt")
+                output = model.generate(**inputs, max_new_tokens=150, do_sample=True, temperature=0.8)
+                decoded_output = tokenizer.decode(output[0], skip_special_tokens=True)
+
+                # Extração da última resposta
+                last_response = decoded_output.split("Qwen:")[-1].strip()
+
+                st.session_state.chat_history.append({
+                    'user': user_input_qwen,
+                    'bot': last_response
+                })
+
+            except Exception as e:
+                st.error(f"Erro ao gerar resposta: {e}")
+        else:
+            st.warning("⚠️ Escreve uma mensagem para iniciar a conversa.")
+
+    # Mostrar o histórico
+    if st.session_state.chat_history:
+        st.markdown("### 🗨️ Histórico da Conversa")
+        for msg in reversed(st.session_state.chat_history[-5:]):
+            st.markdown(f"**Você:** {msg['user']}")
+            st.markdown(f"**Qwen:** {msg['bot']}")
+            st.markdown("---")
+
+    st.markdown('</div>', unsafe_allow_html=True)
