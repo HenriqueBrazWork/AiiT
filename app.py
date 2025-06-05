@@ -1,157 +1,489 @@
 import streamlit as st
 from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification, AutoModelForSeq2SeqLM, AutoModelForCausalLM
 import torch
+import logging
+from typing import Dict, Any
+import time
 
-st.set_page_config(page_title="AiiT - IA Multifunções", layout="wide")
+# Configuração de logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Configuração da página
+st.set_page_config(
+    page_title="AiiT - IA Multifunções", 
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# CSS melhorado com responsividade
 st.markdown("""
     <style>
-        body {
-            background-color: #f9f9f9;
-            color: #333333;
-            font-family: 'Segoe UI', sans-serif;
-        }
         .main {
-            background-color: #ffffff;
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 1rem;
         }
-        h1, h2, h3 {
-            color: #004d99;
-        }
-        .stTextInput>div>div>input {
-            padding: 10px;
-            font-size: 16px;
-        }
-        .stButton>button {
-            background-color: #004d99;
-            color: white;
-            border-radius: 0.5rem;
-            padding: 10px 20px;
-        }
+        
         .demo-card {
-            padding: 2rem;
-            background-color: #ffffff;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+        
+        .metric-card {
+            background: rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            margin: 0.5rem 0;
+        }
+        
+        .stButton > button {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 0.5rem 2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .stButton > button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .chat-message {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .user-message {
+            background: rgba(102, 126, 234, 0.3);
+            margin-left: 2rem;
+        }
+        
+        .bot-message {
+            background: rgba(118, 75, 162, 0.3);
+            margin-right: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .demo-card {
+                padding: 1rem;
+            }
         }
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🤖 AiiT - Aplicação de IA Multifunções")
+# Constantes
+MAX_TEXT_LENGTH = 1000
+MAX_CHAT_HISTORY = 10
+DEFAULT_MODELS = {
+    "sentiment": "cardiffnlp/twitter-roberta-base-sentiment-latest",
+    "summarization": "facebook/bart-large-cnn",
+    "chat": "microsoft/DialoGPT-medium"
+}
 
-models = {}
+class ModelManager:
+    """Classe para gerenciar o carregamento e cache dos modelos"""
+    
+    def __init__(self):
+        self.models = {}
+        self.loading_status = {}
+    
+    @st.cache_resource
+    def load_sentiment_model(_self):
+        """Carrega modelo de análise de sentimentos"""
+        try:
+            return pipeline(
+                "sentiment-analysis", 
+                model=DEFAULT_MODELS["sentiment"],
+                return_all_scores=True
+            )
+        except Exception as e:
+            logger.error(f"Erro ao carregar modelo de sentimentos: {e}")
+            # Fallback para modelo mais leve
+            return pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
+    
+    @st.cache_resource
+    def load_summarization_model(_self):
+        """Carrega modelo de sumarização"""
+        try:
+            tokenizer = AutoTokenizer.from_pretrained(DEFAULT_MODELS["summarization"])
+            model = AutoModelForSeq2SeqLM.from_pretrained(DEFAULT_MODELS["summarization"])
+            return {"tokenizer": tokenizer, "model": model}
+        except Exception as e:
+            logger.error(f"Erro ao carregar modelo de sumarização: {e}")
+            # Fallback
+            tokenizer = AutoTokenizer.from_pretrained("t5-small")
+            model = AutoModelForSeq2SeqLM.from_pretrained("t5-small")
+            return {"tokenizer": tokenizer, "model": model}
+    
+    @st.cache_resource
+    def load_chat_model(_self):
+        """Carrega modelo de chat"""
+        try:
+            tokenizer = AutoTokenizer.from_pretrained(DEFAULT_MODELS["chat"])
+            model = AutoModelForCausalLM.from_pretrained(DEFAULT_MODELS["chat"])
+            
+            # Configurar pad_token se não existir
+            if tokenizer.pad_token is None:
+                tokenizer.pad_token = tokenizer.eos_token
+                
+            return {"tokenizer": tokenizer, "model": model}
+        except Exception as e:
+            logger.error(f"Erro ao carregar modelo de chat: {e}")
+            # Fallback para modelo mais leve
+            tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen1.5-0.5B-Chat", trust_remote_code=True)
+            model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen1.5-0.5B-Chat", trust_remote_code=True)
+            return {"tokenizer": tokenizer, "model": model}
 
-@st.cache_resource
-def load_lite_models():
-    sentiment_pipeline = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
-    summarization_tokenizer = AutoTokenizer.from_pretrained("t5-small")
-    summarization_model = AutoModelForSeq2SeqLM.from_pretrained("t5-small")
-    qwen_tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen1.5-0.5B-Chat", trust_remote_code=True)
-    qwen_model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen1.5-0.5B-Chat", trust_remote_code=True)
-    return {
-        "sentiment": sentiment_pipeline,
-        "summarization": {
-            "tokenizer": summarization_tokenizer,
-            "model": summarization_model
-        },
-        "qwen": {
-            "tokenizer": qwen_tokenizer,
-            "model": qwen_model
-        }
-    }
+def validate_input(text: str, max_length: int = MAX_TEXT_LENGTH) -> tuple[bool, str]:
+    """Valida entrada do usuário"""
+    if not text or not text.strip():
+        return False, "⚠️ Por favor, insira um texto válido."
+    
+    if len(text) > max_length:
+        return False, f"⚠️ Texto muito longo. Máximo permitido: {max_length} caracteres."
+    
+    return True, ""
 
-with st.spinner("🔄 A carregar modelos..."):
-    models = load_lite_models()
-
-tab1, tab2, tab3 = st.tabs(["😊 Análise de Sentimentos", "📄 Resumo de Texto", "🤖 Chat IA (Qwen)"])
-
-# --- TAB 1: Análise de Sentimentos ---
-with tab1:
-    st.markdown('<div class="demo-card">', unsafe_allow_html=True)
-    st.subheader("😊 Análise de Sentimentos")
-    st.write("Introduz um texto para obter a análise de sentimento.")
-
-    user_input_sentiment = st.text_area("Texto:", height=150, key="sentiment_input")
-
-    if st.button("🔍 Analisar Sentimento", key="sentiment_button"):
-        if user_input_sentiment and 'sentiment' in models:
-            result = models["sentiment"](user_input_sentiment)
-            st.write("**Resultado:**")
-            st.json(result)
-        else:
-            st.warning("⚠️ Introduz um texto para análise.")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# --- TAB 2: Resumo de Texto ---
-with tab2:
-    st.markdown('<div class="demo-card">', unsafe_allow_html=True)
-    st.subheader("📄 Resumo de Texto")
-    st.write("Insere um texto longo para gerar um resumo.")
-
-    user_input_summary = st.text_area("Texto para resumir:", height=200, key="summary_input")
-
-    if st.button("📄 Resumir", key="summary_button"):
-        if user_input_summary and 'summarization' in models:
-            tokenizer = models["summarization"]["tokenizer"]
-            model = models["summarization"]["model"]
-
-            inputs = tokenizer("summarize: " + user_input_summary, return_tensors="pt", max_length=512, truncation=True)
-            summary_ids = model.generate(inputs["input_ids"], max_length=150, min_length=30, length_penalty=2.0, num_beams=4, early_stopping=True)
-            summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
-
-            st.write("**Resumo:**")
-            st.success(summary)
-        else:
-            st.warning("⚠️ Introduz um texto válido.")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# --- TAB 3: Chat IA com Qwen ---
-with tab3:
-    st.markdown('<div class="demo-card">', unsafe_allow_html=True)
-    st.subheader("🤖 Chat com IA - Modelo Qwen")
-    st.write("Converse com uma IA baseada no modelo Qwen")
-
+def init_session_state():
+    """Inicializa variáveis de sessão"""
     if 'chat_history' not in st.session_state:
         st.session_state.chat_history = []
+    if 'model_manager' not in st.session_state:
+        st.session_state.model_manager = ModelManager()
 
-    user_input_qwen = st.text_area("Digite sua mensagem:", height=100, key="qwen_input")
+def render_header():
+    """Renderiza cabeçalho da aplicação"""
+    st.title("🤖 AiiT - Aplicação de IA Multifunções")
+    st.markdown("### Plataforma integrada de processamento de linguagem natural")
+    
+    # Sidebar com informações
+    with st.sidebar:
+        st.header("ℹ️ Informações")
+        st.info("Esta aplicação oferece múltiplas funcionalidades de IA para processamento de texto.")
+        
+        st.header("🔧 Configurações")
+        max_length = st.slider("Comprimento máximo do texto", 100, 2000, MAX_TEXT_LENGTH)
+        
+        st.header("📊 Estatísticas")
+        if hasattr(st.session_state, 'usage_stats'):
+            for key, value in st.session_state.usage_stats.items():
+                st.metric(key, value)
 
-    if st.button("💬 Enviar", key="qwen_send_btn"):
-        if user_input_qwen and 'qwen' in models:
-            tokenizer = models['qwen']['tokenizer']
-            model = models['qwen']['model']
-
-            try:
-                prompt = ""
-                for msg in st.session_state.chat_history:
-                    prompt += f"Usuário: {msg['user']}\nQwen: {msg['bot']}\n"
-                prompt += f"Usuário: {user_input_qwen}\nQwen:"
-
-                inputs = tokenizer(prompt, return_tensors="pt")
-                output = model.generate(**inputs, max_new_tokens=150, do_sample=True, temperature=0.8)
-                decoded_output = tokenizer.decode(output[0], skip_special_tokens=True)
-
-                # Extração da última resposta
-                last_response = decoded_output.split("Qwen:")[-1].strip()
-
-                st.session_state.chat_history.append({
-                    'user': user_input_qwen,
-                    'bot': last_response
-                })
-
-            except Exception as e:
-                st.error(f"Erro ao gerar resposta: {e}")
-        else:
-            st.warning("⚠️ Escreve uma mensagem para iniciar a conversa.")
-
-    # Mostrar o histórico
-    if st.session_state.chat_history:
-        st.markdown("### 🗨️ Histórico da Conversa")
-        for msg in reversed(st.session_state.chat_history[-5:]):
-            st.markdown(f"**Você:** {msg['user']}")
-            st.markdown(f"**Qwen:** {msg['bot']}")
-            st.markdown("---")
-
+def sentiment_analysis_tab():
+    """Tab de análise de sentimentos"""
+    st.markdown('<div class="demo-card">', unsafe_allow_html=True)
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.subheader("😊 Análise de Sentimentos")
+        st.write("Analise o sentimento de textos em múltiplos idiomas.")
+        
+        user_input = st.text_area(
+            "Digite seu texto:",
+            height=150,
+            key="sentiment_input",
+            help="Máximo de 1000 caracteres"
+        )
+        
+        if st.button("🔍 Analisar Sentimento", key="sentiment_button"):
+            is_valid, error_msg = validate_input(user_input)
+            
+            if not is_valid:
+                st.warning(error_msg)
+                return
+            
+            with st.spinner("Analisando sentimento..."):
+                try:
+                    model = st.session_state.model_manager.load_sentiment_model()
+                    result = model(user_input)
+                    
+                    # Exibir resultados de forma mais visual
+                    st.success("✅ Análise concluída!")
+                    
+                    if isinstance(result[0], list):
+                        # Modelo que retorna todos os scores
+                        for sentiment in result[0]:
+                            label = sentiment['label']
+                            score = sentiment['score']
+                            
+                            # Mapear labels para português
+                            label_map = {
+                                'NEGATIVE': 'Negativo 😞',
+                                'NEUTRAL': 'Neutro 😐',
+                                'POSITIVE': 'Positivo 😊',
+                                'LABEL_0': 'Negativo 😞',
+                                'LABEL_1': 'Neutro 😐',
+                                'LABEL_2': 'Positivo 😊'
+                            }
+                            
+                            display_label = label_map.get(label, label)
+                            st.progress(score, text=f"{display_label}: {score:.2%}")
+                    else:
+                        # Modelo que retorna apenas o resultado principal
+                        st.json(result)
+                        
+                except Exception as e:
+                    st.error(f"❌ Erro na análise: {str(e)}")
+    
+    with col2:
+        st.markdown("### 💡 Dicas")
+        st.markdown("""
+        - Textos mais longos geram análises mais precisas
+        - Funciona com português, inglês e outros idiomas
+        - Ideal para análise de reviews, comentários e feedback
+        """)
+    
     st.markdown('</div>', unsafe_allow_html=True)
+
+def summarization_tab():
+    """Tab de sumarização"""
+    st.markdown('<div class="demo-card">', unsafe_allow_html=True)
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.subheader("📄 Resumo Inteligente de Texto")
+        st.write("Gere resumos concisos de textos longos.")
+        
+        user_input = st.text_area(
+            "Texto para resumir:",
+            height=200,
+            key="summary_input",
+            help="Insira textos longos para obter resumos eficazes"
+        )
+        
+        # Opções avançadas
+        with st.expander("⚙️ Configurações Avançadas"):
+            max_length = st.slider("Comprimento máximo do resumo", 50, 300, 150)
+            min_length = st.slider("Comprimento mínimo do resumo", 20, 100, 30)
+        
+        if st.button("📄 Gerar Resumo", key="summary_button"):
+            is_valid, error_msg = validate_input(user_input, 2000)
+            
+            if not is_valid:
+                st.warning(error_msg)
+                return
+            
+            with st.spinner("Gerando resumo..."):
+                try:
+                    model_data = st.session_state.model_manager.load_summarization_model()
+                    tokenizer = model_data["tokenizer"]
+                    model = model_data["model"]
+                    
+                    # Preparar input com contexto adequado
+                    if "t5" in tokenizer.name_or_path.lower():
+                        input_text = "summarize: " + user_input
+                    else:
+                        input_text = user_input
+                    
+                    inputs = tokenizer(
+                        input_text, 
+                        return_tensors="pt", 
+                        max_length=1024, 
+                        truncation=True
+                    )
+                    
+                    summary_ids = model.generate(
+                        inputs["input_ids"],
+                        max_length=max_length,
+                        min_length=min_length,
+                        length_penalty=2.0,
+                        num_beams=4,
+                        early_stopping=True,
+                        no_repeat_ngram_size=2
+                    )
+                    
+                    summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+                    
+                    st.success("✅ Resumo gerado com sucesso!")
+                    st.markdown("### 📋 Resumo:")
+                    st.info(summary)
+                    
+                    # Estatísticas
+                    original_words = len(user_input.split())
+                    summary_words = len(summary.split())
+                    compression_ratio = (1 - summary_words/original_words) * 100
+                    
+                    col_stat1, col_stat2, col_stat3 = st.columns(3)
+                    with col_stat1:
+                        st.metric("Palavras Originais", original_words)
+                    with col_stat2:
+                        st.metric("Palavras do Resumo", summary_words)
+                    with col_stat3:
+                        st.metric("Taxa de Compressão", f"{compression_ratio:.1f}%")
+                    
+                except Exception as e:
+                    st.error(f"❌ Erro na sumarização: {str(e)}")
+    
+    with col2:
+        st.markdown("### 💡 Dicas")
+        st.markdown("""
+        - Textos com 300+ palavras geram melhores resumos
+        - Ideal para artigos, relatórios e documentos
+        - Ajuste o comprimento conforme necessário
+        """)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+
+def chat_tab():
+    """Tab de chat com IA"""
+    st.markdown('<div class="demo-card">', unsafe_allow_html=True)
+    
+    st.subheader("🤖 Chat Inteligente")
+    st.write("Converse com nossa IA em linguagem natural.")
+    
+    # Área de input
+    col1, col2 = st.columns([4, 1])
+    
+    with col1:
+        user_input = st.text_area(
+            "Digite sua mensagem:",
+            height=100,
+            key="chat_input",
+            help="Escreva sua pergunta ou comentário"
+        )
+    
+    with col2:
+        st.markdown("<br>", unsafe_allow_html=True)  # Espaçamento
+        send_button = st.button("💬 Enviar", key="chat_send_btn", use_container_width=True)
+        clear_button = st.button("🗑️ Limpar", key="chat_clear_btn", use_container_width=True)
+    
+    if clear_button:
+        st.session_state.chat_history = []
+        st.rerun()
+    
+    if send_button and user_input:
+        is_valid, error_msg = validate_input(user_input)
+        
+        if not is_valid:
+            st.warning(error_msg)
+        else:
+            with st.spinner("Gerando resposta..."):
+                try:
+                    model_data = st.session_state.model_manager.load_chat_model()
+                    tokenizer = model_data["tokenizer"]
+                    model = model_data["model"]
+                    
+                    # Construir contexto da conversa
+                    conversation_context = ""
+                    for msg in st.session_state.chat_history[-3:]:  # Últimas 3 mensagens
+                        conversation_context += f"Usuário: {msg['user']}\nAssistente: {msg['bot']}\n"
+                    
+                    full_prompt = conversation_context + f"Usuário: {user_input}\nAssistente:"
+                    
+                    inputs = tokenizer.encode(full_prompt, return_tensors="pt", max_length=512, truncation=True)
+                    
+                    with torch.no_grad():
+                        outputs = model.generate(
+                            inputs,
+                            max_new_tokens=100,
+                            do_sample=True,
+                            temperature=0.7,
+                            top_p=0.9,
+                            pad_token_id=tokenizer.eos_token_id,
+                            repetition_penalty=1.1
+                        )
+                    
+                    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+                    
+                    # Extrair apenas a nova resposta
+                    if "Assistente:" in response:
+                        bot_response = response.split("Assistente:")[-1].strip()
+                    else:
+                        bot_response = response[len(full_prompt):].strip()
+                    
+                    # Limitar tamanho da resposta
+                    if len(bot_response) > 200:
+                        bot_response = bot_response[:200] + "..."
+                    
+                    # Adicionar ao histórico
+                    st.session_state.chat_history.append({
+                        'user': user_input,
+                        'bot': bot_response,
+                        'timestamp': time.time()
+                    })
+                    
+                    # Limitar histórico
+                    if len(st.session_state.chat_history) > MAX_CHAT_HISTORY:
+                        st.session_state.chat_history = st.session_state.chat_history[-MAX_CHAT_HISTORY:]
+                    
+                    # Limpar input
+                    st.rerun()
+                    
+                except Exception as e:
+                    st.error(f"❌ Erro ao gerar resposta: {str(e)}")
+                    logger.error(f"Erro no chat: {e}")
+    
+    # Exibir histórico da conversa
+    if st.session_state.chat_history:
+        st.markdown("### 💬 Conversa")
+        
+        # Container com scroll
+        chat_container = st.container()
+        
+        with chat_container:
+            for i, msg in enumerate(reversed(st.session_state.chat_history[-5:])):
+                # Mensagem do usuário
+                st.markdown(f"""
+                <div class="chat-message user-message">
+                    <strong>👤 Você:</strong><br>
+                    {msg['user']}
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Resposta do bot
+                st.markdown(f"""
+                <div class="chat-message bot-message">
+                    <strong>🤖 Assistente:</strong><br>
+                    {msg['bot']}
+                </div>
+                """, unsafe_allow_html=True)
+                
+                if i < len(st.session_state.chat_history) - 1:
+                    st.markdown("---")
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+
+def main():
+    """Função principal"""
+    init_session_state()
+    render_header()
+    
+    # Tabs principais
+    tab1, tab2, tab3 = st.tabs([
+        "😊 Análise de Sentimentos", 
+        "📄 Resumo de Texto", 
+        "🤖 Chat IA"
+    ])
+    
+    with tab1:
+        sentiment_analysis_tab()
+    
+    with tab2:
+        summarization_tab()
+    
+    with tab3:
+        chat_tab()
+    
+    # Footer
+    st.markdown("---")
+    st.markdown(
+        "<div style='text-align: center; color: #666;'>"
+        "🚀 AiiT - Powered by Transformers & Streamlit | "
+        "Desenvolvida com ❤️ para demonstração de IA"
+        "</div>", 
+        unsafe_allow_html=True
+    )
+
+if __name__ == "__main__":
+    main()
