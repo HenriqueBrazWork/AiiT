@@ -86,7 +86,7 @@ MAX_CHAT_HISTORY = 10
 DEFAULT_MODELS = {
     "sentiment": "cardiffnlp/twitter-roberta-base-sentiment-latest",
     "summarization": "facebook/bart-large-cnn",
-    "chat": "microsoft/DialoGPT-medium"
+    "chat": "HuggingFaceH4/zephyr-7b-beta"
 }
 
 class ModelManager:
