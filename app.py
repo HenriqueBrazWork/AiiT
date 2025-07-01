@@ -233,10 +233,10 @@ def sentiment_analysis_tab():
                         st.json(result)
                         
                 except Exception as e:
-                    st.error(f"❌ Erro na análise: {str(e)}")
+                    st.error(f" Erro na análise: {str(e)}")
     
     with col2:
-        st.markdown("### 💡 Dicas")
+        st.markdown("###  Dicas")
         st.markdown("""
         - Textos mais longos geram análises mais precisas
         - Funciona com português, inglês e outros idiomas
@@ -252,7 +252,7 @@ def summarization_tab():
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        st.subheader("📄 Resumo Inteligente de Texto")
+        st.subheader(" Resumo Inteligente de Texto")
         st.write("Gere resumos concisos de textos longos.")
         
         user_input = st.text_area(
@@ -263,11 +263,11 @@ def summarization_tab():
         )
         
         # Opções avançadas
-        with st.expander("⚙️ Configurações Avançadas"):
+        with st.expander(" Configurações Avançadas"):
             max_length = st.slider("Comprimento máximo do resumo", 50, 300, 150)
             min_length = st.slider("Comprimento mínimo do resumo", 20, 100, 30)
         
-        if st.button("📄 Gerar Resumo", key="summary_button"):
+        if st.button(" Gerar Resumo", key="summary_button"):
             is_valid, error_msg = validate_input(user_input, 2000)
             
             if not is_valid:
@@ -305,8 +305,8 @@ def summarization_tab():
                     
                     summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
                     
-                    st.success("✅ Resumo gerado com sucesso!")
-                    st.markdown("### 📋 Resumo:")
+                    st.success(" Resumo gerado com sucesso!")
+                    st.markdown("###  Resumo:")
                     st.info(summary)
                     
                     # Estatísticas
@@ -323,10 +323,10 @@ def summarization_tab():
                         st.metric("Taxa de Compressão", f"{compression_ratio:.1f}%")
                     
                 except Exception as e:
-                    st.error(f"❌ Erro na sumarização: {str(e)}")
+                    st.error(f" Erro na sumarização: {str(e)}")
     
     with col2:
-        st.markdown("### 💡 Dicas")
+        st.markdown("###  Dicas")
         st.markdown("""
         - Textos com 300+ palavras geram melhores resumos
         - Ideal para artigos, relatórios e documentos
@@ -339,7 +339,7 @@ def chat_tab():
     """Tab de chat com IA"""
     st.markdown('<div class="demo-card">', unsafe_allow_html=True)
     
-    st.subheader("🤖 Chat Inteligente")
+    st.subheader(" Chat Inteligente")
     st.write("Converse com nossa IA em linguagem natural.")
     
     # Área de input
@@ -355,8 +355,8 @@ def chat_tab():
     
     with col2:
         st.markdown("<br>", unsafe_allow_html=True)  # Espaçamento
-        send_button = st.button("💬 Enviar", key="chat_send_btn", use_container_width=True)
-        clear_button = st.button("🗑️ Limpar", key="chat_clear_btn", use_container_width=True)
+        send_button = st.button(" Enviar", key="chat_send_btn", use_container_width=True)
+        clear_button = st.button(" Limpar", key="chat_clear_btn", use_container_width=True)
     
     if clear_button:
         st.session_state.chat_history = []
@@ -421,12 +421,12 @@ def chat_tab():
                     st.rerun()
                     
                 except Exception as e:
-                    st.error(f"❌ Erro ao gerar resposta: {str(e)}")
+                    st.error(f" Erro ao gerar resposta: {str(e)}")
                     logger.error(f"Erro no chat: {e}")
     
     # Exibir histórico da conversa
     if st.session_state.chat_history:
-        st.markdown("### 💬 Conversa")
+        st.markdown("###  Conversa")
         
         # Container com scroll
         chat_container = st.container()
@@ -444,7 +444,7 @@ def chat_tab():
                 # Resposta do bot
                 st.markdown(f"""
                 <div class="chat-message bot-message">
-                    <strong>🤖 Assistente:</strong><br>
+                    <strong> Assistente:</strong><br>
                     {msg['bot']}
                 </div>
                 """, unsafe_allow_html=True)
@@ -461,9 +461,9 @@ def main():
     
     # Tabs principais
     tab1, tab2, tab3 = st.tabs([
-        "😊 Análise de Sentimentos", 
-        "📄 Resumo de Texto", 
-        "🤖 Chat IA"
+        " Análise de Sentimentos", 
+        " Resumo de Texto", 
+        " Chat IA"
     ])
     
     with tab1:
@@ -479,8 +479,8 @@ def main():
     st.markdown("---")
     st.markdown(
         "<div style='text-align: center; color: #666;'>"
-        "🚀 AiiT - Powered by Transformers & Streamlit | "
-        "Desenvolvida com ❤️ para demonstração de IA"
+        "AiiT - Powered by Transformers & Streamlit | "
+        "Desenvolvida demonstração"
         "</div>", 
         unsafe_allow_html=True
     )
