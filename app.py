@@ -372,7 +372,7 @@ def chat_tab():
                         {"role": "system", "content": "Você é um assistente IA útil."},
                         *[{"role": m["role"], "content": m["content"]} 
                           for m in st.session_state.messages[-4:]]  # Mantém contexto recente
-                    
+                    ]
                     # Aplica o template de chat
                     inputs = tokenizer.apply_chat_template(
                         messages_for_model,
