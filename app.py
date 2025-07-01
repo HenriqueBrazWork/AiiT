@@ -346,9 +346,8 @@ def chat_tab():
     col1, col2 = st.columns([4, 1])
     
     with col1:
-        user_input = st.text_area(
+        user_input = st.text_input(
             "Digite sua mensagem:",
-            height=100,
             key="chat_input",
             help="Escreva sua pergunta ou comentário"
         )
@@ -374,51 +373,48 @@ def chat_tab():
                     tokenizer = model_data["tokenizer"]
                     model = model_data["model"]
                     
-                    # Construir contexto da conversa
-                    conversation_context = ""
-                    for msg in st.session_state.chat_history[-3:]:  # Últimas 3 mensagens
-                        conversation_context += f"Usuário: {msg['user']}\nAssistente: {msg['bot']}\n"
+                    # Construir prompt no formato correto para o Qwen
+                    messages = [
+                        {"role": "system", "content": "Você é um assistente útil."},
+                        {"role": "user", "content": user_input}
+                    ]
                     
-                    full_prompt = conversation_context + f"Usuário: {user_input}\nAssistente:"
+                    # Aplicar template de chat (específico para Qwen)
+                    text = tokenizer.apply_chat_template(
+                        messages,
+                        tokenize=False,
+                        add_generation_prompt=True
+                    )
                     
-                    inputs = tokenizer.encode(full_prompt, return_tensors="pt", max_length=512, truncation=True)
+                    # Codificar o texto
+                    model_inputs = tokenizer([text], return_tensors="pt").to("cuda" if torch.cuda.is_available() else "cpu")
                     
-                    with torch.no_grad():
-                        outputs = model.generate(
-                            inputs,
-                            max_new_tokens=100,
-                            do_sample=True,
-                            temperature=0.7,
-                            top_p=0.9,
-                            pad_token_id=tokenizer.eos_token_id,
-                            repetition_penalty=1.1
-                        )
+                    # Gerar resposta
+                    generated_ids = model.generate(
+                        model_inputs.input_ids,
+                        max_new_tokens=512,
+                        do_sample=True,
+                        temperature=0.7,
+                        top_p=0.9,
+                        eos_token_id=tokenizer.eos_token_id
+                    )
                     
-                    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+                    # Decodificar a resposta, pular tokens especiais
+                    generated_ids = [
+                        output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
+                    ]
                     
-                    # Extrair apenas a nova resposta
-                    if "Assistente:" in response:
-                        bot_response = response.split("Assistente:")[-1].strip()
-                    else:
-                        bot_response = response[len(full_prompt):].strip()
-                    
-                    # Limitar tamanho da resposta
-                    if len(bot_response) > 200:
-                        bot_response = bot_response[:200] + "..."
+                    response = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
                     
                     # Adicionar ao histórico
                     st.session_state.chat_history.append({
                         'user': user_input,
-                        'bot': bot_response,
+                        'bot': response,
                         'timestamp': time.time()
                     })
                     
-                    # Limitar histórico
-                    if len(st.session_state.chat_history) > MAX_CHAT_HISTORY:
-                        st.session_state.chat_history = st.session_state.chat_history[-MAX_CHAT_HISTORY:]
-                    
                     # Limpar input
-                    st.rerun()
+                    st.session_state.chat_input = ""
                     
                 except Exception as e:
                     st.error(f" Erro ao gerar resposta: {str(e)}")
@@ -432,7 +428,7 @@ def chat_tab():
         chat_container = st.container()
         
         with chat_container:
-            for i, msg in enumerate(reversed(st.session_state.chat_history[-5:])):
+            for msg in st.session_state.chat_history:
                 # Mensagem do usuário
                 st.markdown(f"""
                 <div class="chat-message user-message">
@@ -444,13 +440,10 @@ def chat_tab():
                 # Resposta do bot
                 st.markdown(f"""
                 <div class="chat-message bot-message">
-                    <strong> Assistente:</strong><br>
+                    <strong>🤖 Assistente:</strong><br>
                     {msg['bot']}
                 </div>
                 """, unsafe_allow_html=True)
-                
-                if i < len(st.session_state.chat_history) - 1:
-                    st.markdown("---")
     
     st.markdown('</div>', unsafe_allow_html=True)
 
