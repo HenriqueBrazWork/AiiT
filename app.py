@@ -336,115 +336,83 @@ def summarization_tab():
     st.markdown('</div>', unsafe_allow_html=True)
 
 def chat_tab():
-    """Tab de chat com IA"""
+    """Tab de chat com IA - Versão Melhorada"""
     st.markdown('<div class="demo-card">', unsafe_allow_html=True)
     
-    st.subheader(" Chat Inteligente")
-    st.write("Converse com nossa IA em linguagem natural.")
-    
-    # Área de input
-    col1, col2 = st.columns([4, 1])
-    
-    with col1:
-        user_input = st.text_input(
-            "Digite sua mensagem:",
-            key="chat_input",
-            help="Escreva sua pergunta ou comentário"
-        )
-    
-    with col2:
-        st.markdown("<br>", unsafe_allow_html=True)  # Espaçamento
-        send_button = st.button(" Enviar", key="chat_send_btn", use_container_width=True)
-        clear_button = st.button(" Limpar", key="chat_clear_btn", use_container_width=True)
-    
-    if clear_button:
-        st.session_state.chat_history = []
-        st.rerun()
-    
-    if send_button and user_input:
-        is_valid, error_msg = validate_input(user_input)
+    # Inicialização do estado da sessão
+    if 'messages' not in st.session_state:
+        st.session_state.messages = [{"role": "assistant", "content": "Como posso te ajudar hoje?"}]
+
+    # Exibe o histórico de mensagens
+    for msg in st.session_state.messages:
+        avatar = "🤖" if msg["role"] == "assistant" else "👤"
+        with st.chat_message(msg["role"], avatar=avatar):
+            st.markdown(msg["content"])
+
+    # Input do usuário com container especial
+    if prompt := st.chat_input("Digite sua mensagem..."):
+        # Adiciona mensagem do usuário
+        st.session_state.messages.append({"role": "user", "content": prompt})
         
-        if not is_valid:
-            st.warning(error_msg)
-        else:
-            with st.spinner("Gerando resposta..."):
+        # Exibe imediatamente a mensagem do usuário
+        with st.chat_message("user", avatar="👤"):
+            st.markdown(prompt)
+        
+        # Resposta do assistente
+        with st.chat_message("assistant", avatar="🤖"):
+            with st.spinner("Pensando..."):
                 try:
+                    # Carrega o modelo (cacheado)
                     model_data = st.session_state.model_manager.load_chat_model()
                     tokenizer = model_data["tokenizer"]
                     model = model_data["model"]
                     
-                    # Construir prompt no formato correto para o Qwen
-                    messages = [
-                        {"role": "system", "content": "Você é um assistente útil."},
-                        {"role": "user", "content": user_input}
-                    ]
+                    # Prepara as mensagens no formato correto
+                    messages_for_model = [
+                        {"role": "system", "content": "Você é um assistente IA útil."},
+                        *[{"role": m["role"], "content": m["content"]} 
+                          for m in st.session_state.messages[-4:]]  # Mantém contexto recente
                     
-                    # Aplicar template de chat (específico para Qwen)
-                    text = tokenizer.apply_chat_template(
-                        messages,
-                        tokenize=False,
-                        add_generation_prompt=True
-                    )
+                    # Aplica o template de chat
+                    inputs = tokenizer.apply_chat_template(
+                        messages_for_model,
+                        add_generation_prompt=True,
+                        return_tensors="pt"
+                    ).to(model.device)
                     
-                    # Codificar o texto
-                    model_inputs = tokenizer([text], return_tensors="pt").to("cuda" if torch.cuda.is_available() else "cpu")
-                    
-                    # Gerar resposta
-                    generated_ids = model.generate(
-                        model_inputs.input_ids,
-                        max_new_tokens=512,
+                    # Gera a resposta
+                    outputs = model.generate(
+                        inputs,
+                        max_new_tokens=500,
                         do_sample=True,
                         temperature=0.7,
-                        top_p=0.9,
-                        eos_token_id=tokenizer.eos_token_id
+                        top_p=0.9
                     )
                     
-                    # Decodificar a resposta, pular tokens especiais
-                    generated_ids = [
-                        output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
-                    ]
+                    # Decodifica a resposta (removendo o prompt)
+                    response = tokenizer.decode(
+                        outputs[0][len(inputs[0]):], 
+                        skip_special_tokens=True
+                    )
                     
-                    response = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+                    # Exibe a resposta gradualmente (efeito de digitação)
+                    message_placeholder = st.empty()
+                    full_response = ""
+                    for chunk in response.split():
+                        full_response += chunk + " "
+                        time.sleep(0.05)  # Efeito de digitação
+                        message_placeholder.markdown(full_response + "▌")
+                    message_placeholder.markdown(full_response)
                     
-                    # Adicionar ao histórico
-                    st.session_state.chat_history.append({
-                        'user': user_input,
-                        'bot': response,
-                        'timestamp': time.time()
-                    })
-                    
-                    # Limpar input
-                    st.session_state.chat_input = ""
+                    # Adiciona ao histórico
+                    st.session_state.messages.append(
+                        {"role": "assistant", "content": full_response}
+                    )
                     
                 except Exception as e:
-                    st.error(f" Erro ao gerar resposta: {str(e)}")
+                    st.error(f"Erro ao gerar resposta: {str(e)}")
                     logger.error(f"Erro no chat: {e}")
-    
-    # Exibir histórico da conversa
-    if st.session_state.chat_history:
-        st.markdown("###  Conversa")
-        
-        # Container com scroll
-        chat_container = st.container()
-        
-        with chat_container:
-            for msg in st.session_state.chat_history:
-                # Mensagem do usuário
-                st.markdown(f"""
-                <div class="chat-message user-message">
-                    <strong>👤 Você:</strong><br>
-                    {msg['user']}
-                </div>
-                """, unsafe_allow_html=True)
-                
-                # Resposta do bot
-                st.markdown(f"""
-                <div class="chat-message bot-message">
-                    <strong>🤖 Assistente:</strong><br>
-                    {msg['bot']}
-                </div>
-                """, unsafe_allow_html=True)
-    
+
     st.markdown('</div>', unsafe_allow_html=True)
 
 def main():
