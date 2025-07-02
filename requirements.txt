@@ -6,3 +6,8 @@ transformers
 torch
 streamlit
 torchaudio
+logging
+keybert
+bertopic
+accelerate
+sentence-transformers
