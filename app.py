@@ -234,6 +234,141 @@ def update_usage(feature: str):
     st.session_state.last_activity = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 # Funções das novas funcionalidades
+def summarization_feature():
+    with st.expander("📝 Resumo de Texto", expanded=True):
+        text = st.text_area("Texto para resumir", height=200)
+        col1, col2 = st.columns(2)
+        with col1:
+            max_length = st.slider("Tamanho máximo", 50, 300, 150)
+        with col2:
+            min_length = st.slider("Tamanho mínimo", 10, 100, 50)
+        
+        if st.button("Gerar Resumo") and text:
+            with st.spinner("Processando..."):
+                try:
+                    models = st.session_state.model_manager.load_summarization_model()
+                    tokenizer = models["tokenizer"]
+                    model = models["model"]
+                    
+                    inputs = tokenizer.encode(
+                        "summarize: " + text,
+                        return_tensors="pt",
+                        max_length=512,
+                        truncation=True
+                    ).to(model.device)
+                    
+                    summary_ids = model.generate(
+                        inputs,
+                        max_length=max_length,
+                        min_length=min_length,
+                        length_penalty=2.0,
+                        num_beams=4,
+                        early_stopping=True
+                    )
+                    
+                    summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+                    update_usage("Resumos")
+                    
+                    st.markdown(f"""
+                    <div class="result-box">
+                        <h4>Resumo Gerado</h4>
+                        <p>{summary}</p>
+                        <p>Redução: {len(text.split())} → {len(summary.split())} palavras</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                except Exception as e:
+                    st.error(f"Erro ao gerar resumo: {str(e)}")
+
+def sentiment_feature():
+    with st.expander("😊 Análise de Sentimentos", expanded=True):
+        text = st.text_area("Texto para análise", height=150)
+        if st.button("Analisar") and text:
+            with st.spinner("Processando..."):
+                try:
+                    model = st.session_state.model_manager.load_sentiment_model()
+                    result = model(text)
+                    update_usage("Análises")
+                    
+                    st.markdown("""
+                    <div class="result-box">
+                        <h4>Resultados</h4>
+                    """, unsafe_allow_html=True)
+                    
+                    if isinstance(result[0], list):
+                        for sentiment in result[0]:
+                            label_map = {
+                                'NEGATIVE': 'Negativo 😞',
+                                'NEUTRAL': 'Neutro 😐',
+                                'POSITIVE': 'Positivo 😊'
+                            }
+                            display_label = label_map.get(sentiment['label'], sentiment['label'])
+                            st.progress(sentiment['score'], 
+                                      text=f"{display_label}: {sentiment['score']:.2%}")
+                    else:
+                        st.json(result)
+                        
+                    st.markdown("</div>", unsafe_allow_html=True)
+                except Exception as e:
+                    st.error(f"Erro na análise: {str(e)}")
+
+def poem_generation_feature():
+    with st.expander("✍️ Gerador de Poemas", expanded=True):
+        theme = st.text_input("Tema do poema")
+        length = st.slider("Comprimento", 50, 300, 100)
+        
+        if st.button("Gerar Poema") and theme:
+            with st.spinner("Criando poema..."):
+                try:
+                    generator = st.session_state.model_manager.load_generation_model()
+                    if generator:
+                        poem = generator(
+                            f"Escreva um poema sobre {theme}:",
+                            max_length=length,
+                            do_sample=True,
+                            temperature=0.9
+                        )
+                        update_usage("Consultas")
+                        
+                        st.markdown(f"""
+                        <div class="result-box">
+                            <h4>Poema Gerado</h4>
+                            <p style="white-space: pre-line;">{poem[0]['generated_text']}</p>
+                        </div>
+                        """, unsafe_allow_html=True)
+                    else:
+                        st.warning("Modelo de geração não disponível")
+                except Exception as e:
+                    st.error(f"Erro ao gerar poema: {str(e)}")
+
+def story_generation_feature():
+    with st.expander("📖 Gerador de Histórias", expanded=True):
+        prompt = st.text_area("Início da história ou tema")
+        length = st.slider("Comprimento da história", 100, 500, 200)
+        
+        if st.button("Gerar História") and prompt:
+            with st.spinner("Criando história..."):
+                try:
+                    generator = st.session_state.model_manager.load_generation_model()
+                    if generator:
+                        story = generator(
+                            f"Continue esta história: {prompt}",
+                            max_length=length,
+                            do_sample=True,
+                            temperature=0.85
+                        )
+                        update_usage("Consultas")
+                        
+                        st.markdown(f"""
+                        <div class="result-box">
+                            <h4>História Gerada</h4>
+                            <p style="white-space: pre-line;">{story[0]['generated_text']}</p>
+                        </div>
+                        """, unsafe_allow_html=True)
+                    else:
+                        st.warning("Modelo de geração não disponível")
+                except Exception as e:
+                    st.error(f"Erro ao gerar história: {str(e)}")
+
 def translation_feature():
     with st.expander("🌍 Tradutor Português-Inglês", expanded=True):
         text = st.text_area("Texto para traduzir", height=150)
@@ -373,7 +508,6 @@ def similarity_feature():
                         st.warning("Modelo de embeddings não disponível")
                 except Exception as e:
                     st.error(f"Erro no cálculo: {str(e)}")
-
 def main():
     # Inicialização
     init_session_state()
