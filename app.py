@@ -236,7 +236,7 @@ def update_usage(feature: str):
 # Funções das novas funcionalidades
 def summarization_feature():
     with st.expander("📝 Resumo de Texto", expanded=True):
-        text = st.text_area("Texto para resumir", height=200)
+        text = st.text_area("Texto para resumir", height=200, key="summary_text")
         col1, col2 = st.columns(2)
         with col1:
             max_length = st.slider("Tamanho máximo", 50, 300, 150)
@@ -281,7 +281,7 @@ def summarization_feature():
 
 def sentiment_feature():
     with st.expander("😊 Análise de Sentimentos", expanded=True):
-        text = st.text_area("Texto para análise", height=150)
+        text = st.text_area("Texto para análise", height=150, key="sentiment_text")
         if st.button("Analisar") and text:
             with st.spinner("Processando..."):
                 try:
@@ -313,7 +313,7 @@ def sentiment_feature():
 
 def poem_generation_feature():
     with st.expander("✍️ Gerador de Poemas", expanded=True):
-        theme = st.text_input("Tema do poema")
+        theme = st.text_input("Tema do poema", key="poem_theme")
         length = st.slider("Comprimento", 50, 300, 100)
         
         if st.button("Gerar Poema") and theme:
@@ -342,7 +342,7 @@ def poem_generation_feature():
 
 def story_generation_feature():
     with st.expander("📖 Gerador de Histórias", expanded=True):
-        prompt = st.text_area("Início da história ou tema")
+        prompt = st.text_area("Início da história ou tema", key="story_prompt")
         length = st.slider("Comprimento da história", 100, 500, 200)
         
         if st.button("Gerar História") and prompt:
@@ -371,7 +371,7 @@ def story_generation_feature():
 
 def translation_feature():
     with st.expander("🌍 Tradutor Português-Inglês", expanded=True):
-        text = st.text_area("Texto para traduzir", height=150)
+        text = st.text_area("Texto para traduzir", height=150, key="translation_text")
         if st.button("Traduzir"):
             if not text.strip():
                 st.warning("Por favor, insira um texto")
@@ -396,8 +396,8 @@ def translation_feature():
 
 def ner_feature():
     with st.expander("🔍 Reconhecimento de Entidades", expanded=True):
-        text = st.text_area("Texto para análise", height=150)
-        if st.button("Identificar Entidades"):
+        text = st.text_area("Texto para análise", height=150, key="ner_text_area")
+        if st.button("Identificar Entidades", key="ner_button"):
             if not text.strip():
                 st.warning("Por favor, insira um texto")
                 return
@@ -427,8 +427,8 @@ def ner_feature():
 
 def qa_feature():
     with st.expander("❓ Sistema de Perguntas e Respostas", expanded=True):
-        context = st.text_area("Contexto", height=100)
-        question = st.text_input("Pergunta")
+        context = st.text_area("Contexto", height=100, key="qa_context")
+        question = st.text_input("Pergunta", key="qa_question")
         
         if st.button("Responder") and context and question:
             with st.spinner("Buscando resposta..."):
@@ -452,7 +452,7 @@ def qa_feature():
 
 def text_generation_feature():
     with st.expander("✨ Geração de Texto Criativo", expanded=True):
-        prompt = st.text_area("Prompt de geração", height=100)
+        prompt = st.text_area("Prompt de geração", height=100, key="generation_prompt")
         length = st.slider("Comprimento", 50, 500, 100)
         
         if st.button("Gerar Texto") and prompt:
@@ -484,9 +484,9 @@ def similarity_feature():
     with st.expander("📊 Comparação de Textos", expanded=True):
         col1, col2 = st.columns(2)
         with col1:
-            text1 = st.text_area("Texto 1", height=100)
+            text1 = st.text_area("Texto 1", height=100, key="similarity_text1")
         with col2:
-            text2 = st.text_area("Texto 2", height=100)
+            text2 = st.text_area("Texto 2", height=100, key="similarity_text2")
         
         if st.button("Calcular Similaridade") and text1 and text2:
             with st.spinner("Calculando..."):
