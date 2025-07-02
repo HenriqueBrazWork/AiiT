@@ -239,9 +239,9 @@ def summarization_feature():
         text = st.text_area("Texto para resumir", height=200, key="summary_text")
         col1, col2 = st.columns(2)
         with col1:
-            max_length = st.slider("Tamanho máximo", 50, 300, 150)
+            max_length = st.slider("Tamanho máximo", 50, 300, 150, key="summary_max_len")
         with col2:
-            min_length = st.slider("Tamanho mínimo", 10, 100, 50)
+            min_length = st.slider("Tamanho mínimo", 10, 100, 50, key="summary_min_len")
         
         if st.button("Gerar Resumo") and text:
             with st.spinner("Processando..."):
