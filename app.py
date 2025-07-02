@@ -259,4 +259,195 @@ def summarization_tab():
             "Texto para resumir:",
             height=200,
             key="summary_input",
-            h
+            help="Insira textos longos para obter resumos eficazes"
+        )
+        
+        # Opções avançadas
+        with st.expander(" Configurações Avançadas"):
+            max_length = st.slider("Comprimento máximo do resumo", 50, 300, 150)
+            min_length = st.slider("Comprimento mínimo do resumo", 20, 100, 30)
+        
+        if st.button(" Gerar Resumo", key="summary_button"):
+            is_valid, error_msg = validate_input(user_input, 2000)
+            
+            if not is_valid:
+                st.warning(error_msg)
+                return
+            
+            with st.spinner("Gerando resumo..."):
+                try:
+                    model_data = st.session_state.model_manager.load_summarization_model()
+                    tokenizer = model_data["tokenizer"]
+                    model = model_data["model"]
+                    
+                    # Preparar input com contexto adequado
+                    if "t5" in tokenizer.name_or_path.lower():
+                        input_text = "summarize: " + user_input
+                    else:
+                        input_text = user_input
+                    
+                    inputs = tokenizer(
+                        input_text, 
+                        return_tensors="pt", 
+                        max_length=1024, 
+                        truncation=True
+                    )
+                    
+                    summary_ids = model.generate(
+                        inputs["input_ids"],
+                        max_length=max_length,
+                        min_length=min_length,
+                        length_penalty=2.0,
+                        num_beams=4,
+                        early_stopping=True,
+                        no_repeat_ngram_size=2
+                    )
+                    
+                    summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+                    
+                    st.success(" Resumo gerado com sucesso!")
+                    st.markdown("###  Resumo:")
+                    st.info(summary)
+                    
+                    # Estatísticas
+                    original_words = len(user_input.split())
+                    summary_words = len(summary.split())
+                    compression_ratio = (1 - summary_words/original_words) * 100
+                    
+                    col_stat1, col_stat2, col_stat3 = st.columns(3)
+                    with col_stat1:
+                        st.metric("Palavras Originais", original_words)
+                    with col_stat2:
+                        st.metric("Palavras do Resumo", summary_words)
+                    with col_stat3:
+                        st.metric("Taxa de Compressão", f"{compression_ratio:.1f}%")
+                    
+                except Exception as e:
+                    st.error(f" Erro na sumarização: {str(e)}")
+    
+    with col2:
+        st.markdown("###  Dicas")
+        st.markdown("""
+        - Textos com 300+ palavras geram melhores resumos
+        - Ideal para artigos, relatórios e documentos
+        - Ajuste o comprimento conforme necessário
+        """)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+
+def chat_tab():
+    """Tab de chat com IA - Versão Melhorada"""
+    st.markdown('<div class="demo-card">', unsafe_allow_html=True)
+    
+    # Inicialização do estado da sessão
+    if 'messages' not in st.session_state:
+        st.session_state.messages = [{"role": "assistant", "content": "Como posso te ajudar hoje?"}]
+
+    # Exibe o histórico de mensagens
+    for msg in st.session_state.messages:
+        avatar = "🤖" if msg["role"] == "assistant" else "👤"
+        with st.chat_message(msg["role"], avatar=avatar):
+            st.markdown(msg["content"])
+
+    # Input do usuário com container especial
+    if prompt := st.chat_input("Digite sua mensagem..."):
+        # Adiciona mensagem do usuário
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        
+        # Exibe imediatamente a mensagem do usuário
+        with st.chat_message("user", avatar="👤"):
+            st.markdown(prompt)
+        
+        # Resposta do assistente
+        with st.chat_message("assistant", avatar="🤖"):
+            with st.spinner("Pensando..."):
+                try:
+                    # Carrega o modelo (cacheado)
+                    model_data = st.session_state.model_manager.load_chat_model()
+                    tokenizer = model_data["tokenizer"]
+                    model = model_data["model"]
+                    
+                    # Prepara as mensagens no formato correto
+                    messages_for_model = [
+                        {"role": "system", "content": "Você é um assistente IA útil."},
+                        *[{"role": m["role"], "content": m["content"]} 
+                          for m in st.session_state.messages[-4:]]  # Mantém contexto recente
+                    ]
+                    # Aplica o template de chat
+                    inputs = tokenizer.apply_chat_template(
+                        messages_for_model,
+                        add_generation_prompt=True,
+                        padding=True,
+                        truncation=True,
+                        return_tensors="pt"
+                    ).to(model.device)
+                    
+                    # Gera a resposta
+                    outputs = model.generate(
+                        inputs_ids=inputs["inputs_ids"],
+                        attention_mask=inputs["attention_mask"],
+                        max_new_tokens=500,
+                        do_sample=True,
+                        temperature=0.7,
+                        top_p=0.9
+                    )
+                    
+                    # Decodifica a resposta (removendo o prompt)
+                    response = tokenizer.decode(
+                        outputs[0][len(inputs[0]):], 
+                        skip_special_tokens=True
+                    )
+                    
+                    # Exibe a resposta gradualmente (efeito de digitação)
+                    message_placeholder = st.empty()
+                    full_response = ""
+                    for chunk in response.split():
+                        full_response += chunk + " "
+                        time.sleep(0.05)  # Efeito de digitação
+                        message_placeholder.markdown(full_response + "▌")
+                    message_placeholder.markdown(full_response)
+                    
+                    # Adiciona ao histórico
+                    st.session_state.messages.append(
+                        {"role": "assistant", "content": full_response}
+                    )
+                    
+                except Exception as e:
+                    st.error(f"Erro ao gerar resposta: {str(e)}")
+                    logger.error(f"Erro no chat: {e}")
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+def main():
+    """Função principal"""
+    init_session_state()
+    render_header()
+    
+    # Tabs principais
+    tab1, tab2, tab3 = st.tabs([
+        " Análise de Sentimentos", 
+        " Resumo de Texto", 
+        " Chat IA"
+    ])
+    
+    with tab1:
+        sentiment_analysis_tab()
+    
+    with tab2:
+        summarization_tab()
+    
+    with tab3:
+        chat_tab()
+    
+    # Footer
+    st.markdown("---")
+    st.markdown(
+        "<div style='text-align: center; color: #666;'>"
+        "AiiT - Powered by Transformers & Streamlit | "
+        "Desenvolvida demonstração"
+        "</div>", 
+        unsafe_allow_html=True
+    )
+
+if __name__ == "__main__":
+    main()
