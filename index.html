@@ -502,7 +502,7 @@
     <!-- Chatbot Container -->
     <div id="chatbot-container" class="fixed bottom-24 right-8 w-80 bg-white rounded-xl shadow-2xl overflow-hidden z-50 hidden flex flex-col" style="height: 500px;">
         <div class="bg-primary text-white p-4 flex justify-between items-center">
-            <h3 class="font-bold text-lg">Assistente AiiT (Ollama)</h3>
+            <h3 class="font-bold text-lg">Assistente AiiT Powered by Llama2</h3>
             <button id="close-chatbot" class="text-white hover:text-gray-200">
                 <i class="fas fa-times"></i>
             </button>
@@ -688,87 +688,95 @@
         }
 
         // Function to handle sending messages
-        async function sendMessage() {
-            const message = chatInput.value.trim();
-            if (!message) return;
-            
-            addMessage(message, true);
-            chatInput.value = '';
-            
-            // Show typing indicator
-            const typingIndicator = document.createElement('div');
-            typingIndicator.classList.add('flex', 'justify-start');
-            typingIndicator.innerHTML = `
-                <div class="bg-gray-100 text-gray-800 px-4 py-2 rounded-lg">
-                    <div class="flex space-x-1">
-                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
-                    </div>
-                </div>
-            `;
-            chatMessages.appendChild(typingIndicator);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-            
-            try {
-                const messageId = 'msg-' + Date.now();
-                
-                if (useStreaming.checked) {
-                    // Stream the response
-                    const response = await fetch('http://localhost:11434/api/generate', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            model: 'llama2',
-                            prompt: message,
-                            stream: true
-                        })
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch response from Ollama');
-                    }
-                    
-                    // Remove typing indicator
-                    chatMessages.removeChild(typingIndicator);
-                    
-                    // Handle streaming response
-                    await handleStreamingResponse(response, messageId);
-                } else {
-                    // Regular non-streaming response
-                    const response = await fetch('http://localhost:11434/api/generate', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            model: 'llama2',
-                            prompt: message,
-                            stream: false
-                        })
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch response from Ollama');
-                    }
-                    
-                    const data = await response.json();
-                    
-                    // Remove typing indicator
-                    chatMessages.removeChild(typingIndicator);
-                    
-                    // Add bot response
-                    addMessage(data.response, false);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                chatMessages.removeChild(typingIndicator);
-                addMessage("Desculpe, não consegui me conectar ao servidor Ollama local. Por favor, verifique se o Ollama está instalado e rodando em http://localhost:11434", false);
-            }
+async function sendMessage() {
+    const message = chatInput.value.trim();
+    if (!message) return;
+    
+    addMessage(message, true);
+    chatInput.value = '';
+    
+    // Show typing indicator
+    const typingIndicator = document.createElement('div');
+    typingIndicator.classList.add('flex', 'justify-start');
+    typingIndicator.innerHTML = `
+        <div class="bg-gray-100 text-gray-800 px-4 py-2 rounded-lg">
+            <div class="flex space-x-1">
+                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+            </div>
+        </div>
+    `;
+    chatMessages.appendChild(typingIndicator);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    try {
+        // Primeiro verifique se o servidor Ollama está respondendo
+        const pingResponse = await fetch('http://localhost:11434', {
+            method: 'GET'
+        });
+        
+        if (!pingResponse.ok) {
+            throw new Error('Servidor Ollama não está respondendo');
         }
 
+        const messageId = 'msg-' + Date.now();
+        const model = 'llama2'; // Altere para o modelo que você tem instalado
+        
+        if (useStreaming.checked) {
+            const response = await fetch('http://localhost:11434/api/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    model: model,
+                    prompt: message,
+                    stream: true
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Erro no servidor: ${response.status}`);
+            }
+            
+            chatMessages.removeChild(typingIndicator);
+            await handleStreamingResponse(response, messageId);
+        } else {
+            const response = await fetch('http://localhost:11434/api/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    model: model,
+                    prompt: message,
+                    stream: false
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Erro no servidor: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            chatMessages.removeChild(typingIndicator);
+            addMessage(data.response, false);
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        chatMessages.removeChild(typingIndicator);
+        
+        let errorMessage = "Erro ao conectar ao Ollama: ";
+        if (error.message.includes('Failed to fetch')) {
+            errorMessage += "Servidor não encontrado. Verifique se o Ollama está rodando em http://localhost:11434";
+        } else {
+            errorMessage += error.message;
+        }
+        
+        addMessage(errorMessage, false);
+    }
+}
         // Event listeners for sending messages
         sendMessageBtn.addEventListener('click', sendMessage);
         chatInput.addEventListener('keypress', (e) => {
