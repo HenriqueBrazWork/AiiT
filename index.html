@@ -51,6 +51,33 @@
         .nav-link:hover::after {
             width: 100%;
         }
+        /* Chatbot styles */
+        #chat-messages {
+            scrollbar-width: thin;
+            scrollbar-color: #3B82F6 #F3F4F6;
+        }
+        #chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        #chat-messages::-webkit-scrollbar-track {
+            background: #F3F4F6;
+            border-radius: 3px;
+        }
+        #chat-messages::-webkit-scrollbar-thumb {
+            background-color: #3B82F6;
+            border-radius: 3px;
+        }
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+        .animate-bounce {
+            animation: bounce 1s infinite;
+        }
     </style>
 </head>
 <body class="font-sans bg-gray-50 text-gray-800">
@@ -283,9 +310,9 @@
                         <p class="text-gray-600">
                             Desenvolvemos chatbots e assistentes virtuais que utilizam IA para automatizar atendimento ao cliente e processos internos.
                         </p>
-                        <a href="https://dhryh3aww7wwjgs8poyf74.streamlit.app/" target="_blank" class="mt-4 inline-block bg-primary hover:bg-blue-600 text-white px-6 py-2 rounded-full font-medium transition shadow-md hover:shadow-lg">
-                            <i class="fas fa-comment-dots mr-2"></i> Testar Chatbot com IA
-                        </a>
+                        <button id="open-chatbot-from-service" class="mt-4 inline-block bg-primary hover:bg-blue-600 text-white px-6 py-2 rounded-full font-medium transition shadow-md hover:shadow-lg">
+                            <i class="fas fa-comment-dots mr-2"></i> Testar Chatbot Local
+                        </button>
                     </div>
                 </div>
                 
@@ -467,6 +494,44 @@
         </div>
     </footer>
 
+    <!-- Chatbot Widget -->
+    <div id="chatbot-widget" class="fixed bottom-8 right-8 w-16 h-16 bg-primary rounded-full shadow-xl flex items-center justify-center cursor-pointer transition-all duration-300 hover:bg-blue-600 z-40">
+        <i class="fas fa-robot text-white text-2xl"></i>
+    </div>
+
+    <!-- Chatbot Container -->
+    <div id="chatbot-container" class="fixed bottom-24 right-8 w-80 bg-white rounded-xl shadow-2xl overflow-hidden z-50 hidden flex flex-col" style="height: 500px;">
+        <div class="bg-primary text-white p-4 flex justify-between items-center">
+            <h3 class="font-bold text-lg">Assistente AiiT (Ollama)</h3>
+            <button id="close-chatbot" class="text-white hover:text-gray-200">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4">
+            <div class="text-center text-gray-500 py-8">
+                <i class="fas fa-robot text-3xl mb-2 text-primary"></i>
+                <p>Olá! Sou um chatbot rodando localmente com Ollama. Como posso ajudar?</p>
+                <p class="text-xs mt-2">Modelo: Llama 2</p>
+            </div>
+        </div>
+        
+        <div class="p-4 border-t border-gray-200">
+            <div class="flex space-x-2">
+                <input id="chat-input" type="text" placeholder="Digite sua mensagem..." 
+                       class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary">
+                <button id="send-message" class="bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-600 transition">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            <div class="mt-2 text-xs text-gray-500">
+                <label class="flex items-center">
+                    <input type="checkbox" id="use-streaming" class="mr-2" checked> Usar resposta em tempo real
+                </label>
+            </div>
+        </div>
+    </div>
+
     <!-- Back to Top Button -->
     <button id="back-to-top" class="fixed bottom-8 right-8 bg-primary text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300">
         <i class="fas fa-arrow-up"></i>
@@ -536,6 +601,179 @@
                 header.classList.remove('shadow-md');
                 header.classList.remove('py-3');
                 header.classList.add('py-4');
+            }
+        });
+
+        // Chatbot functionality
+        const chatbotWidget = document.getElementById('chatbot-widget');
+        const chatbotContainer = document.getElementById('chatbot-container');
+        const closeChatbot = document.getElementById('close-chatbot');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const sendMessageBtn = document.getElementById('send-message');
+        const useStreaming = document.getElementById('use-streaming');
+        const openChatbotFromService = document.getElementById('open-chatbot-from-service');
+
+        // Toggle chatbot visibility
+        chatbotWidget.addEventListener('click', () => {
+            chatbotContainer.classList.toggle('hidden');
+        });
+
+        openChatbotFromService.addEventListener('click', () => {
+            chatbotContainer.classList.remove('hidden');
+        });
+
+        closeChatbot.addEventListener('click', () => {
+            chatbotContainer.classList.add('hidden');
+        });
+
+        // Function to add a message to the chat
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('flex', isUser ? 'justify-end' : 'justify-start');
+            
+            const messageBubble = document.createElement('div');
+            messageBubble.classList.add(
+                'max-w-xs', 'lg:max-w-md', 'px-4', 'py-2', 'rounded-lg',
+                isUser ? 'bg-primary text-white' : 'bg-gray-100 text-gray-800'
+            );
+            messageBubble.textContent = content;
+            
+            messageDiv.appendChild(messageBubble);
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Function to handle streaming responses
+        async function handleStreamingResponse(response, messageId) {
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let messageElement = document.getElementById(messageId);
+            
+            if (!messageElement) {
+                messageElement = document.createElement('div');
+                messageElement.id = messageId;
+                messageElement.classList.add('flex', 'justify-start');
+                chatMessages.appendChild(messageElement);
+            }
+            
+            let fullResponse = '';
+            
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                
+                const chunk = decoder.decode(value, { stream: true });
+                const lines = chunk.split('\n');
+                
+                for (const line of lines) {
+                    if (line.startsWith('data:') && line !== 'data: [DONE]') {
+                        try {
+                            const data = JSON.parse(line.substring(5));
+                            if (data.response) {
+                                fullResponse += data.response;
+                                messageElement.innerHTML = `
+                                    <div class="bg-gray-100 text-gray-800 px-4 py-2 rounded-lg max-w-xs lg:max-w-md">
+                                        ${fullResponse}
+                                    </div>
+                                `;
+                                chatMessages.scrollTop = chatMessages.scrollHeight;
+                            }
+                        } catch (e) {
+                            console.error('Error parsing stream data:', e);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Function to handle sending messages
+        async function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+            
+            addMessage(message, true);
+            chatInput.value = '';
+            
+            // Show typing indicator
+            const typingIndicator = document.createElement('div');
+            typingIndicator.classList.add('flex', 'justify-start');
+            typingIndicator.innerHTML = `
+                <div class="bg-gray-100 text-gray-800 px-4 py-2 rounded-lg">
+                    <div class="flex space-x-1">
+                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(typingIndicator);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            try {
+                const messageId = 'msg-' + Date.now();
+                
+                if (useStreaming.checked) {
+                    // Stream the response
+                    const response = await fetch('http://localhost:11434/api/generate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            model: 'llama2',
+                            prompt: message,
+                            stream: true
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch response from Ollama');
+                    }
+                    
+                    // Remove typing indicator
+                    chatMessages.removeChild(typingIndicator);
+                    
+                    // Handle streaming response
+                    await handleStreamingResponse(response, messageId);
+                } else {
+                    // Regular non-streaming response
+                    const response = await fetch('http://localhost:11434/api/generate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            model: 'llama2',
+                            prompt: message,
+                            stream: false
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch response from Ollama');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Remove typing indicator
+                    chatMessages.removeChild(typingIndicator);
+                    
+                    // Add bot response
+                    addMessage(data.response, false);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                chatMessages.removeChild(typingIndicator);
+                addMessage("Desculpe, não consegui me conectar ao servidor Ollama local. Por favor, verifique se o Ollama está instalado e rodando em http://localhost:11434", false);
+            }
+        }
+
+        // Event listeners for sending messages
+        sendMessageBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
             }
         });
     </script>
