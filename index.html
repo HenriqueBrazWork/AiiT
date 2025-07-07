@@ -1,98 +1,306 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AiiT - Soluções Tecnológicas Inovadoras</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Suporte Técnico Informático | AiiT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .contact-btn {
+            transition: all 0.3s ease;
+        }
+        .contact-btn:hover {
+            background-color: #2563eb;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+        .feature-icon {
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+        }
+    </style>
 </head>
-<body>
-    <!-- Header / Menu de Navegação -->
-    <header>
-        <div class="container">
-            <h1>AiiT</h1>
-            <nav>
-                <ul>
-                    <li><a href="#inicio">Início</a></li>
-                    <li><a href="#sobre">Sobre</a></li>
-                    <li><a href="#servicos">Serviços</a></li>
-                    <li><a href="#contato">Contato</a></li>
-                </ul>
-            </nav>
-            <a href="#servicos" class="cta-button">Conheça nossos Serviços</a>
+<body class="font-sans bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center">
+                <a href="#" class="text-blue-600 font-bold text-2xl">AiiT</a>
+                <button class="ml-4 md:hidden">
+                    <i class="fas fa-bars text-gray-600"></i>
+                </button>
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#" class="text-gray-600 hover:text-blue-600">Publicar Anúncio</a>
+                <a href="#" class="text-gray-600 hover:text-blue-600">Favoritos</a>
+                <a href="#" class="text-gray-600 hover:text-blue-600">Mensagens</a>
+                <button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Entrar</button>
+            </div>
         </div>
     </header>
 
-    <!-- Página Inicial -->
-    <section id="inicio">
-        <div class="hero">
-            <h2>Soluções inovadoras para transformar desafios em oportunidades</h2>
-        </div>
-    </section>
-
-    <!-- Sobre Nós -->
-    <section id="sobre">
-        <div class="container">
-            <h2>Sobre Nós</h2>
-            <p>AiiT é uma empresa dedicada a criar soluções inovadoras para os problemas dos clientes, utilizando o que há de mais avançado em tecnologia, robótica, Machine Learning e Inteligência Artificial.</p>
-            <img src="sua-imagem-aqui.jpg" alt="Imagem ilustrativa sobre a AiiT">
-        </div>
-    </section>
-
-    <!-- Serviços -->
-    <section id="servicos">
-        <div class="container">
-            <h2>Serviços</h2>
-            <div class="servicos-lista">
-                <div class="servico-item">
-                    <h3>Serviço 1</h3>
-                    <p>Descrição do serviço 1.</p>
-                </div>
-                <div class="servico-item">
-                    <h3>Serviço 2</h3>
-                    <p>Descrição do serviço 2.</p>
-                </div>
-                <div class="servico-item">
-                    <h3>Serviço 3</h3>
-                    <p>Descrição do serviço 3.</p>
-                </div>
+    <!-- Hero Section -->
+    <section class="hero-section text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-3xl md:text-4xl font-bold mb-4">Precisa de ajuda com o seu computador ou outros dispositivos eletrónicos?</h1>
+                <p class="text-xl mb-8">Oferecemos serviços de suporte técnico informático de qualidade e confiança, adaptados às suas necessidades!</p>
+                <button class="bg-white text-blue-600 font-bold px-8 py-3 rounded-full contact-btn">Contactar Agora</button>
             </div>
         </div>
     </section>
 
-    <!-- Contato -->
-    <section id="contato">
-        <div class="container">
-            <h2>Contato</h2>
-            <form action="#" method="post">
-                <label for="nome">Nome:</label>
-                <input type="text" id="nome" name="nome" required>
-
-                <label for="email">E-mail:</label>
-                <input type="email" id="email" name="email" required>
-
-                <label for="mensagem">Mensagem:</label>
-                <textarea id="mensagem" name="mensagem" required></textarea>
-
-                <button type="submit">Enviar</button>
-            </form>
-            <div class="contato-info">
-                <p>Email: <a href="mailto:contato@aiit.com">contato@aiit.com</a></p>
-                <p>Telefone: <a href="tel:+551112345678">(11) 1234-5678</a></p>
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12">
+        <!-- Services Section -->
+        <section class="mb-16">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-8 text-center">Serviços Incluídos</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="bg-white rounded-lg shadow-md p-6 service-card transition duration-300">
+                    <div class="text-blue-600 mb-4">
+                        <i class="fas fa-tools text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Reparação de Avarias</h3>
+                    <p class="text-gray-600">Diagnóstico e conserto de problemas de hardware e software. Resolvemos desde problemas simples até avarias complexas.</p>
+                </div>
+                
+                <!-- Service 2 -->
+                <div class="bg-white rounded-lg shadow-md p-6 service-card transition duration-300">
+                    <div class="text-blue-600 mb-4">
+                        <i class="fas fa-bug text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Resolução de Problemas</h3>
+                    <p class="text-gray-600">Otimização de desempenho, remoção de vírus, solução de erros de sistema, e muito mais para manter seu dispositivo funcionando perfeitamente.</p>
+                </div>
+                
+                <!-- Service 3 -->
+                <div class="bg-white rounded-lg shadow-md p-6 service-card transition duration-300">
+                    <div class="text-blue-600 mb-4">
+                        <i class="fas fa-laptop-medical text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Suporte Personalizado</h3>
+                    <p class="text-gray-600">Assistência remota ou presencial, configuração de novos dispositivos, instalação de programas e suporte técnico contínuo.</p>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Rodapé -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 AiiT - Todos os direitos reservados.</p>
-            <div class="social-icons">
-                <!-- Coloque os links das redes sociais aqui -->
+        <!-- Why Choose Us -->
+        <section class="mb-16">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-8 text-center">Por que escolher-nos?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Atendimento rápido e eficiente com resposta em até 24 horas</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Técnicos qualificados com vasta experiência e certificações</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Soluções personalizadas para particulares e empresas</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Preços competitivos e transparentes sem custos ocultos</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="aspect-w-16 aspect-h-9 bg-gray-200 rounded-lg overflow-hidden mb-4">
+                        <img src="https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" 
+                             alt="Técnico trabalhando em computador" 
+                             class="w-full h-full object-cover">
+                    </div>
+                    <p class="text-gray-600">Nossa equipe está pronta para ajudar com qualquer problema técnico que você possa ter, garantindo a melhor solução para suas necessidades.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="bg-blue-50 rounded-xl p-8 md:p-12 text-center">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Entre em contato hoje mesmo!</h2>
+            <p class="text-gray-600 mb-6 max-w-2xl mx-auto">Tenha o seu equipamento a funcionar como novo com o nosso serviço profissional de suporte técnico.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button class="bg-blue-600 text-white px-6 py-3 rounded-md font-medium contact-btn flex items-center justify-center">
+                    <i class="fas fa-phone-alt mr-2"></i> Ligar Agora
+                </button>
+                <button class="bg-white text-blue-600 border border-blue-600 px-6 py-3 rounded-md font-medium hover:bg-blue-50 flex items-center justify-center">
+                    <i class="fas fa-envelope mr-2"></i> Enviar Mensagem
+                </button>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="mt-16">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-8 text-center">O que dizem os nossos clientes</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Testimonial 1 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gray-300 overflow-hidden mr-4">
+                            <img src="https://randomuser.me/api/portraits/women/43.jpg" alt="Cliente" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Ana Silva</h4>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"O técnico resolveu meu problema com o laptop em menos de uma hora. Serviço excelente e profissional!"</p>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gray-300 overflow-hidden mr-4">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Cliente" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Carlos Mendes</h4>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"Finalmente encontrei um serviço técnico confiável. Resolveram um problema complexo que outros não conseguiram."</p>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gray-300 overflow-hidden mr-4">
+                            <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Cliente" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Marta Oliveira</h4>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"Ótimo atendimento e preço justo. Meu computador está muito mais rápido depois da otimização que fizeram."</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">AiiT</h3>
+                    <p class="text-gray-400">Serviços técnicos especializados em informática e dispositivos eletrónicos.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Serviços</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Suporte Técnico</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Reparações</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Manutenção</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Ajuda</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Perguntas Frequentes</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Termos e Condições</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Política de Privacidade</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contactos</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-gray-400"><i class="fas fa-phone mr-2"></i> +351 123 456 789</li>
+                        <li class="flex items-center text-gray-400"><i class="fas fa-envelope mr-2"></i> suporte@tecnico.pt</li>
+                        <li class="flex items-center text-gray-400"><i class="fas fa-map-marker-alt mr-2"></i> Lisboa, Portugal</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>© 2023 Suporte Técnico Informático. Todos os direitos reservados.</p>
             </div>
         </div>
     </footer>
 
-    <script src="scripts.js"></script>
+    <!-- Contact Modal -->
+    <div id="contactModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Contactar Anunciante</h3>
+                <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form>
+                <div class="mb-4">
+                    <label for="name" class="block text-gray-700 mb-2">Seu Nome</label>
+                    <input type="text" id="name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block text-gray-700 mb-2">Seu Email</label>
+                    <input type="email" id="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label for="phone" class="block text-gray-700 mb-2">Telefone (opcional)</label>
+                    <input type="tel" id="phone" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label for="message" class="block text-gray-700 mb-2">Mensagem</label>
+                    <textarea id="message" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">Enviar Mensagem</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality
+        const contactButtons = document.querySelectorAll('.contact-btn');
+        const modal = document.getElementById('contactModal');
+        const closeModal = document.getElementById('closeModal');
+
+        contactButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                modal.classList.remove('hidden');
+            });
+        });
+
+        closeModal.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+    </script>
 </body>
 </html>
