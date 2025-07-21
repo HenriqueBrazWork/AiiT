@@ -712,7 +712,7 @@ async function sendMessage() {
     
     try {
         // Primeiro verifique se o servidor Ollama está respondendo
-        const pingResponse = await fetch('http://localhost:11434', {
+        const pingResponse = await fetch('https://dump-exhaust-murder-poly.trycloudflare.com/api/generate', {
             method: 'GET'
         });
         
