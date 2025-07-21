@@ -136,7 +136,7 @@
                 </div>
             </div>
             <div class="md:w-1/2">
-                <img src="/AiiTLogo.png" 
+                <img src="AiiTLogo.png" 
                      alt="AiiTLogo" 
                      class="rounded-xl shadow-2xl w-full h-auto object-cover">
             </div>
@@ -502,7 +502,7 @@
     <!-- Chatbot Container -->
     <div id="chatbot-container" class="fixed bottom-24 right-8 w-80 bg-white rounded-xl shadow-2xl overflow-hidden z-50 hidden flex flex-col" style="height: 500px;">
         <div class="bg-primary text-white p-4 flex justify-between items-center">
-            <h3 class="font-bold text-lg">Assistente AiiT Powered by Llama2</h3>
+            <h3 class="font-bold text-lg">Assistente AiiT Powered by Gemma3</h3>
             <button id="close-chatbot" class="text-white hover:text-gray-200">
                 <i class="fas fa-times"></i>
             </button>
@@ -512,13 +512,13 @@
             <div class="text-center text-gray-500 py-8">
                 <i class="fas fa-robot text-3xl mb-2 text-primary"></i>
                 <p>Olá! Sou um chatbot rodando localmente com Ollama. Como posso ajudar?</p>
-                <p class="text-xs mt-2">Modelo: Llama 2</p>
+                <p class="text-xs mt-2">Modelo: Gemma 3</p>
             </div>
         </div>
         
         <div class="p-4 border-t border-gray-200">
             <div class="flex space-x-2">
-                <input id="chat-input" type="text" placeholder="Digite sua mensagem..." 
+                <input id="chat-input" type="text" placeholder="Digite a sua mensagem..." 
                        class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary">
                 <button id="send-message" class="bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-600 transition">
                     <i class="fas fa-paper-plane"></i>
@@ -721,7 +721,7 @@ async function sendMessage() {
         }
 
         const messageId = 'msg-' + Date.now();
-        const model = 'llama2'; // Altere para o modelo que você tem instalado
+        const model = 'gemma3'; // Altere para o modelo que você tem instalado
         
         if (useStreaming.checked) {
             const response = await fetch('http://localhost:11434/api/generate', {
