@@ -1,0 +1,13 @@
+streamlit
+fastapi
+uvicorn
+requests
+python-jose
+passlib[bcrypt]
+pydantic
+stripe
+transformers
+torch
+sqlalchemy
+psycopg2-binary
+python-dotenv
