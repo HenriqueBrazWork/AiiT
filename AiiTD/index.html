@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AiiT - Soluções Tecnológicas Inovadoras</title>
+    <title>BrazServices - Soluções Integradas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -15,6 +15,8 @@
                         secondary: '#10B981',
                         dark: '#1F2937',
                         light: '#F9FAFB',
+                        brazred: '#E63946',
+                        brazblue: '#1D3557',
                     },
                     fontFamily: {
                         sans: ['Roboto', 'sans-serif'],
@@ -27,6 +29,12 @@
     <style>
         .gradient-text {
             background: linear-gradient(90deg, #3B82F6, #10B981);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .brazgradient-text {
+            background: linear-gradient(90deg, #E63946, #1D3557);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -51,7 +59,14 @@
         .nav-link:hover::after {
             width: 100%;
         }
-        /* Chatbot styles */
+        .branch-tab {
+            transition: all 0.3s ease;
+        }
+        .branch-tab.active {
+            background-color: #F9FAFB;
+            border-bottom: 3px solid #E63946;
+            font-weight: 600;
+        }
         #chat-messages {
             scrollbar-width: thin;
             scrollbar-color: #3B82F6 #F3F4F6;
@@ -84,17 +99,17 @@
     <!-- Header -->
     <header class="fixed w-full bg-white shadow-sm z-50 transition-all duration-300">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold gradient-text">AiiT</a>
+            <a href="#" class="text-2xl font-bold brazgradient-text">BrazServices</a>
             
             <nav class="hidden md:flex space-x-8">
                 <a href="#inicio" class="nav-link font-medium text-gray-700 hover:text-primary transition">Início</a>
                 <a href="#sobre" class="nav-link font-medium text-gray-700 hover:text-primary transition">Sobre</a>
-                <a href="#servicos" class="nav-link font-medium text-gray-700 hover:text-primary transition">Serviços</a>
+                <a href="#branches" class="nav-link font-medium text-gray-700 hover:text-primary transition">Nossas Empresas</a>
                 <a href="#contato" class="nav-link font-medium text-gray-700 hover:text-primary transition">Contato</a>
             </nav>
             
-            <a href="#servicos" class="hidden md:block bg-primary hover:bg-blue-600 text-white px-6 py-2 rounded-full font-medium transition shadow-md hover:shadow-lg">
-                Conheça nossos Serviços
+            <a href="#branches" class="hidden md:block bg-brazred hover:bg-red-700 text-white px-6 py-2 rounded-full font-medium transition shadow-md hover:shadow-lg">
+                Nossas Empresas
             </a>
             
             <button id="menu-toggle" class="md:hidden text-gray-700 focus:outline-none">
@@ -107,10 +122,10 @@
             <div class="flex flex-col space-y-4">
                 <a href="#inicio" class="font-medium text-gray-700 hover:text-primary transition">Início</a>
                 <a href="#sobre" class="font-medium text-gray-700 hover:text-primary transition">Sobre</a>
-                <a href="#servicos" class="font-medium text-gray-700 hover:text-primary transition">Serviços</a>
+                <a href="#branches" class="font-medium text-gray-700 hover:text-primary transition">Nossas Empresas</a>
                 <a href="#contato" class="font-medium text-gray-700 hover:text-primary transition">Contato</a>
-                <a href="#servicos" class="bg-primary hover:bg-blue-600 text-white px-6 py-2 rounded-full font-medium transition text-center">
-                    Conheça nossos Serviços
+                <a href="#branches" class="bg-brazred hover:bg-red-700 text-white px-6 py-2 rounded-full font-medium transition text-center">
+                    Nossas Empresas
                 </a>
             </div>
         </div>
@@ -121,23 +136,23 @@
         <div class="container mx-auto px-6 flex flex-col md:flex-row items-center">
             <div class="md:w-1/2 mb-12 md:mb-0">
                 <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                    <span class="gradient-text">Soluções inovadoras</span> para transformar desafios em oportunidades
+                    <span class="brazgradient-text">BrazServices</span> - Um grupo de empresas inovadoras
                 </h1>
                 <p class="text-lg md:text-xl text-gray-600 mb-8">
-                    Utilizamos Inteligência Artificial, Machine Learning e Robótica para criar soluções personalizadas que impulsionam seu negócio.
+                    Da tecnologia à mobilidade, oferecemos soluções integradas que impulsionam negócios e transformam ideias em realidade.
                 </p>
                 <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                    <a href="#servicos" class="bg-primary hover:bg-blue-600 text-white px-8 py-3 rounded-full font-medium transition shadow-md hover:shadow-lg text-center">
-                        Saiba Mais
+                    <a href="#branches" class="bg-brazred hover:bg-red-700 text-white px-8 py-3 rounded-full font-medium transition shadow-md hover:shadow-lg text-center">
+                        Conheça Nossas Empresas
                     </a>
-                    <a href="#contato" class="border border-primary text-primary hover:bg-primary hover:text-white px-8 py-3 rounded-full font-medium transition shadow-sm hover:shadow-md text-center">
+                    <a href="#contato" class="border border-brazblue text-brazblue hover:bg-brazblue hover:text-white px-8 py-3 rounded-full font-medium transition shadow-sm hover:shadow-md text-center">
                         Fale Conosco
                     </a>
                 </div>
             </div>
             <div class="md:w-1/2">
-                <img src="https://henriquebrazwork.github.io/AiiT/AiiTLogo.png" 
-                     alt="AiiTLogo" 
+                <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" 
+                     alt="Grupo de empresas" 
                      class="rounded-xl shadow-2xl w-full h-auto object-cover">
             </div>
         </div>
@@ -147,48 +162,48 @@
     <section id="sobre" class="py-20 bg-white">
         <div class="container mx-auto px-6">
             <div class="text-center mb-16">
-                <span class="text-sm font-semibold text-primary bg-blue-50 px-4 py-1 rounded-full">SOBRE NÓS</span>
-                <h2 class="text-3xl md:text-4xl font-bold mt-4 mb-4">Sobre a <span class="gradient-text">AiiT</span></h2>
-                <div class="w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto"></div>
+                <span class="text-sm font-semibold text-brazred bg-red-50 px-4 py-1 rounded-full">SOBRE NÓS</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-4 mb-4">Sobre o <span class="brazgradient-text">Grupo BrazServices</span></h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-brazred to-brazblue mx-auto"></div>
             </div>
             
             <div class="flex flex-col md:flex-row items-center">
                 <div class="md:w-1/2 mb-12 md:mb-0 md:pr-10">
-                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" 
-                         alt="Equipe AiiT" 
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" 
+                         alt="Equipe BrazServices" 
                          class="rounded-xl shadow-lg w-full h-auto object-cover">
                 </div>
                 <div class="md:w-1/2">
                     <p class="text-lg text-gray-600 mb-6">
-                        A AiiT é uma empresa de tecnologia dedicada a criar soluções inovadoras para os desafios mais complexos dos nossos clientes. Combinamos expertise técnica com criatividade para desenvolver produtos que realmente fazem a diferença.
+                        O Grupo BrazServices é uma holding que reúne empresas inovadoras em diversos segmentos, desde tecnologia avançada até soluções de mobilidade e entretenimento.
                     </p>
                     <p class="text-lg text-gray-600 mb-6">
-                        Nossa equipe multidisciplinar trabalha com as tecnologias mais avançadas, incluindo Inteligência Artificial, Machine Learning, Robótica e Internet das Coisas, para oferecer soluções personalizadas que impulsionam resultados.
+                        Nossa missão é oferecer soluções integradas que combinam expertise técnica com criatividade, sempre com foco na excelência e na satisfação dos nossos clientes.
                     </p>
                     <div class="grid grid-cols-2 gap-4 mt-8">
                         <div class="flex items-center">
                             <div class="bg-blue-100 p-3 rounded-full mr-4">
-                                <i class="fas fa-brain text-primary text-xl"></i>
+                                <i class="fas fa-brain text-brazblue text-xl"></i>
                             </div>
-                            <span class="font-medium">IA Avançada</span>
+                            <span class="font-medium">Tecnologia</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="bg-red-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-car text-brazred text-xl"></i>
+                            </div>
+                            <span class="font-medium">Mobilidade</span>
                         </div>
                         <div class="flex items-center">
                             <div class="bg-green-100 p-3 rounded-full mr-4">
-                                <i class="fas fa-robot text-secondary text-xl"></i>
+                                <i class="fas fa-gamepad text-green-500 text-xl"></i>
                             </div>
-                            <span class="font-medium">Robótica</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="bg-purple-100 p-3 rounded-full mr-4">
-                                <i class="fas fa-network-wired text-purple-500 text-xl"></i>
-                            </div>
-                            <span class="font-medium">IoT</span>
+                            <span class="font-medium">Entretenimento</span>
                         </div>
                         <div class="flex items-center">
                             <div class="bg-yellow-100 p-3 rounded-full mr-4">
-                                <i class="fas fa-chart-line text-yellow-500 text-xl"></i>
+                                <i class="fas fa-lightbulb text-yellow-500 text-xl"></i>
                             </div>
-                            <span class="font-medium">Análise de Dados</span>
+                            <span class="font-medium">Inovação</span>
                         </div>
                     </div>
                 </div>
@@ -196,140 +211,187 @@
         </div>
     </section>
 
-   <!-- Services Section -->
-    <section id="servicos" class="py-20 bg-gray-50">
+    <!-- Branches Section -->
+    <section id="branches" class="py-20 bg-gray-50">
         <div class="container mx-auto px-6">
             <div class="text-center mb-16">
-                <span class="text-sm font-semibold text-primary bg-blue-50 px-4 py-1 rounded-full">NOSSOS SERVIÇOS</span>
-                <h2 class="text-3xl md:text-4xl font-bold mt-4 mb-4">Como podemos <span class="gradient-text">transformar seu negócio</span></h2>
+                <span class="text-sm font-semibold text-brazred bg-red-50 px-4 py-1 rounded-full">NOSSAS EMPRESAS</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-4 mb-4">Conheça nossas <span class="brazgradient-text">empresas</span></h2>
                 <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                    Descubra como nossas soluções de Inteligência Artificial, Robótica e Automação podem otimizar processos e criar valor.
+                    Cada empresa do grupo atua em um segmento específico, oferecendo soluções especializadas e inovadoras.
                 </p>
-                <div class="w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto"></div>
+                <div class="w-20 h-1 bg-gradient-to-r from-brazred to-brazblue mx-auto"></div>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-    
-                <!-- Consultoria Estratégica -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
-                    <div class="p-6">
-                        <div class="bg-blue-100 w-14 h-14 rounded-full flex items-center justify-center mb-4">
-                            <i class="fas fa-robot text-primary text-2xl"></i>
+            <!-- Branch Tabs -->
+            <div class="flex flex-wrap justify-center mb-12">
+                <button data-tab="aiit" class="branch-tab active px-6 py-3 mx-2 rounded-t-lg">AiiT</button>
+                <button data-tab="felixfight" class="branch-tab px-6 py-3 mx-2 rounded-t-lg">FelixFight</button>
+                <button data-tab="brazmotors" class="branch-tab px-6 py-3 mx-2 rounded-t-lg">BrazMotors</button>
+            </div>
+            
+            <!-- Branch Content -->
+            <div id="branch-content" class="bg-white rounded-xl shadow-lg p-8">
+                <!-- AiiT Content -->
+                <div id="aiit-content" class="branch-content active">
+                    <div class="flex flex-col lg:flex-row gap-8">
+                        <div class="lg:w-1/2">
+                            <img src="https://henriquebrazwork.github.io/AiiT/AiiTLogo.png" 
+                                 alt="AiiT Logo" 
+                                 class="rounded-xl shadow-md w-full h-auto object-cover">
                         </div>
-                        <h3 class="text-xl font-bold mb-3">Consultoria Estratégica em IA e Robótica</h3>
-                        <p class="text-gray-600">
-                            Planejamento e implementação de soluções personalizadas em IA, Machine Learning, Robótica e Automação.
-                        </p>
+                        <div class="lg:w-1/2">
+                            <h3 class="text-2xl font-bold mb-4 text-brazblue">AiiT - Soluções Tecnológicas Inovadoras</h3>
+                            <p class="text-gray-600 mb-6">
+                                A AiiT é uma empresa de tecnologia dedicada a criar soluções inovadoras para os desafios mais complexos dos nossos clientes. Combinamos expertise técnica com criatividade para desenvolver produtos que realmente fazem a diferença.
+                            </p>
+                            <p class="text-gray-600 mb-6">
+                                Nossa equipe multidisciplinar trabalha com as tecnologias mais avançadas, incluindo Inteligência Artificial, Machine Learning, Robótica e Internet das Coisas, para oferecer soluções personalizadas que impulsionam resultados.
+                            </p>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="flex items-center">
+                                    <div class="bg-blue-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-robot text-brazblue"></i>
+                                    </div>
+                                    <span>IA e Robótica</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="bg-green-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-code text-secondary"></i>
+                                    </div>
+                                    <span>Desenvolvimento</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="bg-purple-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-cogs text-purple-500"></i>
+                                    </div>
+                                    <span>Automação</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="bg-yellow-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-plug text-yellow-500"></i>
+                                    </div>
+                                    <span>Integração</span>
+                                </div>
+                            </div>
+                            <a href="https://henriquebrazwork.github.io/AiiT/" class="inline-block mt-6 bg-brazblue hover:bg-blue-800 text-white px-6 py-2 rounded-full font-medium transition shadow-md hover:shadow-lg">
+                                Visitar Site da AiiT
+                            </a>
+                        </div>
                     </div>
                 </div>
-    
-                <!-- Desenvolvimento de Sistemas Inteligentes -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
-                    <div class="p-6">
-                        <div class="bg-green-100 w-14 h-14 rounded-full flex items-center justify-center mb-4">
-                            <i class="fas fa-code text-secondary text-2xl"></i>
+                
+                <!-- FelixFight Content -->
+                <div id="felixfight-content" class="branch-content hidden">
+                    <div class="flex flex-col lg:flex-row gap-8">
+                        <div class="lg:w-1/2">
+                            <img src="https://images.unsplash.com/photo-1543357480-c60d400e2ef9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" 
+                                 alt="FelixFight" 
+                                 class="rounded-xl shadow-md w-full h-auto object-cover">
                         </div>
-                        <h3 class="text-xl font-bold mb-3">Desenvolvimento de Sistemas Inteligentes</h3>
-                        <p class="text-gray-600">
-                            Softwares inteligentes com IA, Deep Learning e LLMs para otimização de processos empresariais e suporte técnico.
-                        </p>
+                        <div class="lg:w-1/2">
+                            <h3 class="text-2xl font-bold mb-4 text-brazred">FelixFight - Plataforma de E-Sports</h3>
+                            <p class="text-gray-600 mb-6">
+                                A FelixFight é uma plataforma inovadora de e-sports que conecta jogadores, organiza torneios e oferece soluções completas para a comunidade gamer.
+                            </p>
+                            <p class="text-gray-600 mb-6">
+                                Desenvolvemos tecnologias exclusivas para streaming, análise de desempenho e interação entre jogadores, criando uma experiência única no mundo dos jogos competitivos.
+                            </p>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="flex items-center">
+                                    <div class="bg-red-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-gamepad text-brazred"></i>
+                                    </div>
+                                    <span>Torneios</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="bg-blue-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-video text-brazblue"></i>
+                                    </div>
+                                    <span>Streaming</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="bg-purple-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-trophy text-purple-500"></i>
+                                    </div>
+                                    <span>Competições</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="bg-green-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-users text-secondary"></i>
+                                    </div>
+                                    <span>Comunidade</span>
+                                </div>
+                            </div>
+                            <a href="#" class="inline-block mt-6 bg-brazred hover:bg-red-700 text-white px-6 py-2 rounded-full font-medium transition shadow-md hover:shadow-lg">
+                                Em Breve
+                            </a>
+                        </div>
                     </div>
                 </div>
-    
-                <!-- Automação de Processos -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
-                    <div class="p-6">
-                        <div class="bg-purple-100 w-14 h-14 rounded-full flex items-center justify-center mb-4">
-                            <i class="fas fa-cogs text-purple-500 text-2xl"></i>
+                
+                <!-- BrazMotors Content -->
+                <div id="brazmotors-content" class="branch-content hidden">
+                    <div class="flex flex-col lg:flex-row gap-8">
+                        <div class="lg:w-1/2">
+                            <img src="https://images.unsplash.com/photo-1494972308805-463bc619d34e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" 
+                                 alt="BrazMotors" 
+                                 class="rounded-xl shadow-md w-full h-auto object-cover">
                         </div>
-                        <h3 class="text-xl font-bold mb-3">Automação de Processos e RPA</h3>
-                        <p class="text-gray-600">
-                            Automatizamos tarefas repetitivas e processos complexos com RPA e integração de sistemas inteligentes.
-                        </p>
+                        <div class="lg:w-1/2">
+                            <h3 class="text-2xl font-bold mb-4 text-brazblue">BrazMotors - Soluções em Mobilidade</h3>
+                            <p class="text-gray-600 mb-6">
+                                A BrazMotors é especializada em soluções de mobilidade, oferecendo desde veículos personalizados até sistemas de transporte inteligentes.
+                            </p>
+                            <p class="text-gray-600 mb-6">
+                                Combinamos engenharia de ponta com design inovador para criar veículos que atendem às necessidades específicas de cada cliente, sempre com foco em sustentabilidade e eficiência.
+                            </p>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="flex items-center">
+                                    <div class="bg-blue-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-car text-brazblue"></i>
+                                    </div>
+                                    <span>Veículos</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="bg-green-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-leaf text-secondary"></i>
+                                    </div>
+                                    <span>Sustentabilidade</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="bg-yellow-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-cogs text-yellow-500"></i>
+                                    </div>
+                                    <span>Customização</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="bg-red-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-bolt text-brazred"></i>
+                                    </div>
+                                    <span>Inovação</span>
+                                </div>
+                            </div>
+                            <a href="#" class="inline-block mt-6 bg-brazblue hover:bg-blue-800 text-white px-6 py-2 rounded-full font-medium transition shadow-md hover:shadow-lg">
+                                Em Breve
+                            </a>
+                        </div>
                     </div>
                 </div>
-    
-                <!-- Robótica -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
-                    <div class="p-6">
-                        <div class="bg-yellow-100 w-14 h-14 rounded-full flex items-center justify-center mb-4">
-                            <i class="fas fa-industry text-yellow-500 text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-3">Desenvolvimento de Robôs e Sistemas Autônomos</h3>
-                        <p class="text-gray-600">
-                            Criação de robôs industriais, cobots, veículos autônomos e sistemas de automação inteligente.
-                        </p>
-                    </div>
-                </div>
-    
-                <!-- Visão Computacional e IoT -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
-                    <div class="p-6">
-                        <div class="bg-red-100 w-14 h-14 rounded-full flex items-center justify-center mb-4">
-                            <i class="fas fa-eye text-red-500 text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-3">Visão Computacional e IoT</h3>
-                        <p class="text-gray-600">
-                            Integração de IA com câmeras, sensores e dispositivos IoT para monitoramento, reconhecimento e automação em tempo real.
-                        </p>
-                    </div>
-                </div>
-    
-                <!-- Análise de Dados -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
-                    <div class="p-6">
-                        <div class="bg-blue-100 w-14 h-14 rounded-full flex items-center justify-center mb-4">
-                            <i class="fas fa-database text-blue-500 text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-3">Análise de Dados com IA</h3>
-                        <p class="text-gray-600">
-                            Extraímos insights valiosos de grandes volumes de dados usando ML, estatística e visualização avançada.
-                        </p>
-                    </div>
-                </div>
-    
-                <!-- Chatbots e Assistentes Virtuais -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
-                    <div class="p-6">
-                        <div class="bg-purple-100 w-14 h-14 rounded-full flex items-center justify-center mb-4">
-                            <i class="fas fa-comments text-purple-500 text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-3">Chatbots e Assistentes Virtuais</h3>
-                        <p class="text-gray-600">
-                            Desenvolvimento de LLMs personalizados, chatbots e assistentes virtuais para atendimento ao cliente e suporte interno.
-                        </p>
-                        <button id="open-chatbot-from-service" class="mt-4 inline-block bg-primary hover:bg-blue-600 text-white px-6 py-2 rounded-full font-medium transition shadow-md hover:shadow-lg">
-                            <i class="fas fa-comment-dots mr-2"></i> Testar Chatbot Local
-                        </button>
-                    </div>
-                </div>
-    
-                <!-- Integração de Sistemas -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
-                    <div class="p-6">
-                        <div class="bg-yellow-100 w-14 h-14 rounded-full flex items-center justify-center mb-4">
-                            <i class="fas fa-plug text-yellow-500 text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-3">Integração de Sistemas de IA</h3>
-                        <p class="text-gray-600">
-                            Integramos sistemas inteligentes à infraestrutura existente, garantindo melhoria contínua e escalabilidade.
-                        </p>
-                    </div>
-                </div>
-    
             </div>
         </div>
     </section>
+
     <!-- Contact Section -->
     <section id="contato" class="py-20 bg-white">
         <div class="container mx-auto px-6">
             <div class="text-center mb-16">
-                <span class="text-sm font-semibold text-primary bg-blue-50 px-4 py-1 rounded-full">CONTATO</span>
-                <h2 class="text-3xl md:text-4xl font-bold mt-4 mb-4">Fale <span class="gradient-text">conosco</span></h2>
+                <span class="text-sm font-semibold text-brazred bg-red-50 px-4 py-1 rounded-full">CONTATO</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-4 mb-4">Fale <span class="brazgradient-text">conosco</span></h2>
                 <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                    Entre em contato para saber como podemos ajudar seu negócio a alcançar novos patamares com tecnologia.
+                    Entre em contato para saber como nossas empresas podem ajudar seu negócio a alcançar novos patamares.
                 </p>
-                <div class="w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto"></div>
+                <div class="w-20 h-1 bg-gradient-to-r from-brazred to-brazblue mx-auto"></div>
             </div>
             
             <div class="flex flex-col lg:flex-row gap-12">
@@ -337,20 +399,31 @@
                     <form class="space-y-6">
                         <div>
                             <label for="nome" class="block text-gray-700 font-medium mb-2">Nome</label>
-                            <input type="text" id="nome" name="nome" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition" required>
+                            <input type="text" id="nome" name="nome" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brazblue focus:border-brazblue outline-none transition" required>
                         </div>
                         
                         <div>
                             <label for="email" class="block text-gray-700 font-medium mb-2">E-mail</label>
-                            <input type="email" id="email" name="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition" required>
+                            <input type="email" id="email" name="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brazblue focus:border-brazblue outline-none transition" required>
+                        </div>
+                        
+                        <div>
+                            <label for="empresa" class="block text-gray-700 font-medium mb-2">Empresa de Interesse</label>
+                            <select id="empresa" name="empresa" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brazblue focus:border-brazblue outline-none transition">
+                                <option value="">Selecione uma empresa</option>
+                                <option value="aiit">AiiT</option>
+                                <option value="felixfight">FelixFight</option>
+                                <option value="brazmotors">BrazMotors</option>
+                                <option value="brazservices">BrazServices (Grupo)</option>
+                            </select>
                         </div>
                         
                         <div>
                             <label for="mensagem" class="block text-gray-700 font-medium mb-2">Mensagem</label>
-                            <textarea id="mensagem" name="mensagem" rows="5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition" required></textarea>
+                            <textarea id="mensagem" name="mensagem" rows="5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brazblue focus:border-brazblue outline-none transition" required></textarea>
                         </div>
                         
-                        <button type="submit" class="w-full bg-primary hover:bg-blue-600 text-white px-6 py-3 rounded-full font-medium transition shadow-md hover:shadow-lg">
+                        <button type="submit" class="w-full bg-brazred hover:bg-red-700 text-white px-6 py-3 rounded-full font-medium transition shadow-md hover:shadow-lg">
                             Enviar Mensagem
                         </button>
                     </form>
@@ -363,11 +436,11 @@
                         <div class="space-y-6">
                             <div class="flex items-start">
                                 <div class="bg-blue-100 p-3 rounded-full mr-4">
-                                    <i class="fas fa-envelope text-primary"></i>
+                                    <i class="fas fa-envelope text-brazblue"></i>
                                 </div>
                                 <div>
                                     <h4 class="font-medium text-gray-700">Email</h4>
-                                    <a href="mailto:henriquebrazwork@hotmail.com" class="text-gray-600 hover:text-primary transition">henriquebrazwork@hotmail.com</a>
+                                    <a href="mailto:henriquebrazwork@hotmail.com" class="text-gray-600 hover:text-brazblue transition">henriquebrazwork@hotmail.com</a>
                                 </div>
                             </div>
                             
@@ -377,13 +450,13 @@
                                 </div>
                                 <div>
                                     <h4 class="font-medium text-gray-700">Telefone</h4>
-                                    <a href="tel:+351924117781" class="text-gray-600 hover:text-primary transition">(+351) 924 117 781</a>
+                                    <a href="tel:+351924117781" class="text-gray-600 hover:text-brazblue transition">(+351) 924 117 781</a>
                                 </div>
                             </div>
                             
                             <div class="flex items-start">
-                                <div class="bg-purple-100 p-3 rounded-full mr-4">
-                                    <i class="fas fa-map-marker-alt text-purple-500"></i>
+                                <div class="bg-red-100 p-3 rounded-full mr-4">
+                                    <i class="fas fa-map-marker-alt text-brazred"></i>
                                 </div>
                                 <div>
                                     <h4 class="font-medium text-gray-700">Localização</h4>
@@ -420,8 +493,8 @@
         <div class="container mx-auto px-6">
             <div class="flex flex-col md:flex-row justify-between items-center">
                 <div class="mb-6 md:mb-0">
-                    <a href="#" class="text-2xl font-bold gradient-text">AiiT</a>
-                    <p class="mt-2 text-gray-400">Soluções Tecnológicas Inovadoras</p>
+                    <a href="#" class="text-2xl font-bold brazgradient-text">BrazServices</a>
+                    <p class="mt-2 text-gray-400">Soluções Integradas em Diversos Segmentos</p>
                 </div>
                 
                 <div class="flex flex-col md:flex-row md:space-x-10 space-y-4 md:space-y-0">
@@ -430,18 +503,17 @@
                         <ul class="space-y-2">
                             <li><a href="#inicio" class="hover:text-white transition">Início</a></li>
                             <li><a href="#sobre" class="hover:text-white transition">Sobre</a></li>
-                            <li><a href="#servicos" class="hover:text-white transition">Serviços</a></li>
+                            <li><a href="#branches" class="hover:text-white transition">Nossas Empresas</a></li>
                             <li><a href="#contato" class="hover:text-white transition">Contato</a></li>
                         </ul>
                     </div>
                     
                     <div>
-                        <h4 class="text-white font-medium mb-4">Serviços</h4>
+                        <h4 class="text-white font-medium mb-4">Nossas Empresas</h4>
                         <ul class="space-y-2">
-                            <li><a href="#" class="hover:text-white transition">IA e Robótica</a></li>
-                            <li><a href="#" class="hover:text-white transition">Automação</a></li>
-                            <li><a href="#" class="hover:text-white transition">Visão Computacional</a></li>
-                            <li><a href="#" class="hover:text-white transition">Chatbots</a></li>
+                            <li><a href="#branches" class="hover:text-white transition">AiiT</a></li>
+                            <li><a href="#branches" class="hover:text-white transition">FelixFight</a></li>
+                            <li><a href="#branches" class="hover:text-white transition">BrazMotors</a></li>
                         </ul>
                     </div>
                     
@@ -449,7 +521,7 @@
                         <h4 class="text-white font-medium mb-4">Contato</h4>
                         <ul class="space-y-2">
                             <li class="flex items-center">
-                                <i class="fas fa-envelope mr-2 text-primary"></i>
+                                <i class="fas fa-envelope mr-2 text-brazblue"></i>
                                 <a href="mailto:henriquebrazwork@hotmail.com" class="hover:text-white transition">henriquebrazwork@hotmail.com</a>
                             </li>
                             <li class="flex items-center">
@@ -462,7 +534,7 @@
             </div>
             
             <div class="border-t border-gray-800 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-gray-500 text-sm mb-4 md:mb-0">© 2024 AiiT - Todos os direitos reservados.</p>
+                <p class="text-gray-500 text-sm mb-4 md:mb-0">© 2024 BrazServices - Todos os direitos reservados.</p>
                 
                 <div class="flex space-x-6">
                     <a href="#" class="text-gray-400 hover:text-white transition">
@@ -482,53 +554,97 @@
         </div>
     </footer>
 
-    <!-- Chatbot Widget -->
-    <div id="chatbot-widget" class="fixed bottom-8 right-8 w-16 h-16 bg-primary rounded-full shadow-xl flex items-center justify-center cursor-pointer transition-all duration-300 hover:bg-blue-600 z-40">
-        <i class="fas fa-robot text-white text-2xl"></i>
-    </div>
-
-    <!-- Chatbot Container -->
-    <div id="chatbot-container" class="fixed bottom-24 right-8 w-80 bg-white rounded-xl shadow-2xl overflow-hidden z-50 hidden flex flex-col" style="height: 500px;">
-        <div class="bg-primary text-white p-4 flex justify-between items-center">
-            <h3 class="font-bold text-lg">Assistente AiiT Powered by Gemma3</h3>
-            <button id="close-chatbot" class="text-white hover:text-gray-200">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        
-        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4">
-            <div class="text-center text-gray-500 py-8">
-                <i class="fas fa-robot text-3xl mb-2 text-primary"></i>
-                <p>Olá! Sou um chatbot rodando localmente com Ollama. Como posso ajudar?</p>
-                <p class="text-xs mt-2">Modelo: Gemma 3</p>
-            </div>
-        </div>
-        
-        <div class="p-4 border-t border-gray-200">
-            <div class="flex space-x-2">
-                <input id="chat-input" type="text" placeholder="Digite a sua mensagem..." 
-                       class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary">
-                <button id="send-message" class="bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-600 transition">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-            <div class="mt-2 text-xs text-gray-500">
-                <label class="flex items-center">
-                    <input type="checkbox" id="use-streaming" class="mr-2" checked> Usar resposta em tempo real
-                </label>
-            </div>
-        </div>
-    </div>
-
     <!-- Back to Top Button -->
-    <button id="back-to-top" class="fixed bottom-8 right-8 bg-primary text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300">
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-brazred text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300">
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    <script src="chatbot.js"></script>
+    <script>
+        // Mobile Menu Toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Smooth Scrolling for Anchor Links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+        
+        // Back to Top Button
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+                backToTopButton.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopButton.classList.remove('opacity-100', 'visible');
+                backToTopButton.classList.add('opacity-0', 'invisible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Header Scroll Effect
+        const header = document.querySelector('header');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 50) {
+                header.classList.add('shadow-md');
+                header.classList.add('py-3');
+                header.classList.remove('py-4');
+            } else {
+                header.classList.remove('shadow-md');
+                header.classList.remove('py-3');
+                header.classList.add('py-4');
+            }
+        });
+
+        // Branch Tabs Functionality
+        const branchTabs = document.querySelectorAll('.branch-tab');
+        const branchContents = document.querySelectorAll('.branch-content');
+        
+        branchTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and contents
+                branchTabs.forEach(t => t.classList.remove('active'));
+                branchContents.forEach(c => c.classList.add('hidden'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Show corresponding content
+                const tabId = tab.getAttribute('data-tab');
+                const contentId = `${tabId}-content`;
+                document.getElementById(contentId).classList.remove('hidden');
+            });
+        });
+    </script>
 </body>
 </html>
-
-
-
-
